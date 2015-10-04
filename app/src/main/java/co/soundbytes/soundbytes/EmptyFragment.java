@@ -16,16 +16,10 @@ import java.util.LinkedList;
  * Created by Olumide on 10/3/2015.
  */
 public class EmptyFragment extends TitledFragment {
-    private static String[] titles = new String[]{"Page A", "Page B", "Page C"};
-    private static LinkedList<String> list = new LinkedList(Arrays.asList(titles));
-    private String title;
+    private String title = "NewsFeed";
+
     @Override
     public String getTitle(){
-        if(title == null) {
-            if(list.size() == 0)
-                list = new LinkedList(Arrays.asList(titles));
-            title = list.pop();
-        }
         return title;
     }
 

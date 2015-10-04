@@ -33,21 +33,21 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO populate navbar
 
-        //TODO populate viewpager
+        //Populate viewpager
         viewPager = (ViewPager)findViewById(R.id.view_pager);
         viewPager.setAdapter(new CustomViewPagerAdapter(getSupportFragmentManager(), getFragments()));
 
-//        //TODO attach viewpager indicator
-//        TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.view_pager_indicator);
-//        indicator.setViewPager(viewPager);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        //Attach viewpager indicator
+        TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.view_pager_indicator);
+        indicator.setViewPager(viewPager);
+//        indicator.
+//        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
     }
 
     private ArrayList<TitledFragment> getFragments(){
         ArrayList<TitledFragment> fragmentList = new ArrayList<>();
         //Add fragments here
-        fragmentList.add(new EmptyFragment());
-        fragmentList.add(new EmptyFragment());
+        fragmentList.add(new ComposeFragment());
         fragmentList.add(new EmptyFragment());
         return  fragmentList;
     }
