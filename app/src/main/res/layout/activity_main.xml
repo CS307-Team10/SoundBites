@@ -7,7 +7,7 @@
     android:paddingTop="0dp"
     android:paddingBottom="0dp"
     android:id="@+id/main_activity_drawer_layout"
-    tools:context="co.soundbytes.soundbytes.MainActivity">
+    tools:context="com.soundbytes.MainActivity">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

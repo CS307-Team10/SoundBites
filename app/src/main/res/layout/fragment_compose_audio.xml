@@ -3,11 +3,13 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout android:layout_width="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:onClick="clearFocus"
         android:layout_height="wrap_content"
-        android:padding="40dp">
+        android:paddingTop="80dp"
+        android:paddingBottom="80dp">
         <LinearLayout
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:id="@+id/add_layout"
             android:layout_width="wrap_content"
             android:orientation="vertical"
@@ -15,7 +17,7 @@
             android:gravity="center_horizontal"
             android:layout_height="95dp">
             <EditText
-                android:inputType="textNoSuggestions"
+                android:inputType="textNoSuggestions|textVisiblePassword|textNoSuggestions"
                 android:hint="@string/add_friend_hint"
                 android:gravity="center"
                 android:textSize="18sp"
@@ -26,7 +28,7 @@
                 android:contentDescription="@string/add_friend_button_desc"
                 android:id="@+id/person_add_button"
                 android:background="?android:selectableItemBackground"
-                android:src="@drawable/ic_person_add_black_24dp"
+                android:src="@drawable/ic_person_add_black_48dp"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="fitXY"
@@ -36,7 +38,7 @@
             android:contentDescription="@string/record_audio_button_desc"
             android:layout_below="@+id/add_layout"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_keyboard_voice_black_24dp"
+            android:src="@drawable/ic_mic_black_48dp"
             android:id="@+id/mic_button"
             android:background="?android:selectableItemBackground"
             android:layout_width="80dp"
@@ -52,7 +54,7 @@
             android:layout_below="@+id/mic_button"
             android:background="?android:selectableItemBackground"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_send_black_24dp"
+            android:src="@drawable/ic_send_black_48dp"
             android:layout_width="50dp"
             android:layout_height="50dp" />
         <ImageButton
@@ -61,7 +63,7 @@
             android:layout_toRightOf="@+id/mic_button"
             android:layout_centerVertical="true"
             android:padding="5dp"
-            android:src="@drawable/ic_pause_circle_outline_black_24dp"
+            android:src="@drawable/ic_pause_circle_outline_black_48dp"
             android:background="?android:selectableItemBackground"
             android:layout_width="50dp"
             android:layout_height="50dp" />
@@ -71,7 +73,7 @@
             android:layout_toLeftOf="@+id/mic_button"
             android:layout_centerVertical="true"
             android:padding="5dp"
-            android:src="@drawable/ic_play_circle_outline_black_24dp"
+            android:src="@drawable/ic_play_circle_outline_black_48dp"
             android:background="?android:selectableItemBackground"
             android:layout_width="50dp"
             android:layout_height="50dp" />

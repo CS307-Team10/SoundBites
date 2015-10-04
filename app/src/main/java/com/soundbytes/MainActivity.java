@@ -1,18 +1,19 @@
-package co.soundbytes.soundbytes;
+package com.soundbytes;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
-import com.viewpagerindicator.LinePageIndicator;
 import com.viewpagerindicator.TabPageIndicator;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout drawerLayout;
     private ViewPager viewPager;
+    private static MainActivity thisActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle = initializeActionBarToggle();
         mDrawerToggle.syncState();
         drawerLayout.setDrawerListener(mDrawerToggle);
-
+        thisActivity = this;
         //TODO populate navbar
 
         //Populate viewpager
@@ -42,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
         indicator.setViewPager(viewPager);
 //        indicator.
 //        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+    }
+
+    protected static Activity getMainActivity(){
+        return MainActivity.thisActivity;
     }
 
     private ArrayList<TitledFragment> getFragments(){
@@ -111,5 +117,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void clearFocus(View v){
+        EditText editText = (EditText)findViewById(R.id.add_person_text);
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        v.requestFocus();
     }
 }

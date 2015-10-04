@@ -11,4 +11,5 @@
     <string name="add_friend_button_desc">Add a friend</string>
     <string name="record_audio_button_desc">Record new audio</string>
     <string name="title_activity_main">SoundBytes</string>
+    <string name="record_fragment_title">Mix it!</string>
 </resources>
