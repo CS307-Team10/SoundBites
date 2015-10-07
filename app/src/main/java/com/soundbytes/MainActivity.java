@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clearFocus(View v){
+        //Closes the soft input keyboard and gives focus to the relative layout,
+        // since something must always have focus
         EditText editText = (EditText)findViewById(R.id.add_person_text);
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);

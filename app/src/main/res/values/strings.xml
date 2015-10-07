@@ -7,9 +7,11 @@
     <string name="add_friend_hint">\@friend_username</string>
     <string name="pause_button_desc">Pause Audio</string>
     <string name="play_button_desc">Play Audio</string>
+    <string name="pause_play_button_desc">Play or Play Audio</string>
     <string name="send_button_desc">Send Audio</string>
     <string name="add_friend_button_desc">Add a friend</string>
     <string name="record_audio_button_desc">Record new audio</string>
     <string name="title_activity_main">SoundBytes</string>
     <string name="record_fragment_title">Mix it!</string>
+    <string name="audio_recordings">Audio Recordings</string>
 </resources>

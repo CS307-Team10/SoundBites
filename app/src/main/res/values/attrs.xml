@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AudioTrackMeterView">
+        <attr name="innerPadding" format="integer"/>
+        <attr name="lineColor" format="color"/>
+        <attr name="lineThickness" format="integer"/>
+    </declare-styleable>
+</resources>
