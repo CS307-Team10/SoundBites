@@ -29,4 +29,10 @@ public class LauncherActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startActivity(new Intent(this, Login.class));
+    }
 }
