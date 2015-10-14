@@ -1,6 +1,9 @@
 package com.soundbytes;
 
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,14 @@ import android.widget.TextView;
  */
 public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
     private String title;
+    private RecordButton r;
+    private MediaRecorder mRecorder = null;
+
+    private PlayButton p = null;
+    private MediaPlayer mPlayer = null;
+
+    private static String mFileName = null;
+
 
     @Override
     public String getTitle(){
@@ -25,7 +36,21 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_compose_audio, container, false);
-        ((RecordButton)view.findViewById(R.id.mic_button)).setRecordListener(this);
+        // get RecordButton
+        r = (RecordButton) view.findViewById(R.id.mic_button);
+        r.setRecordListener(this);
+
+        // set up MediaRecorder and outFileName for the RecordButton
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/audiorecordtest.3gp";
+        r.SetOutFileName(mFileName);
+        r.SetMediaRecorder(mRecorder);
+
+        // get PlayButton
+        p = (PlayButton) view.findViewById(R.id.play_button);
+        p.SetOutFileName(mFileName);
+        p.SetMediaPlayer(mPlayer);
+
         return view;
     }
 
