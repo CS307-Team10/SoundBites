@@ -14,7 +14,7 @@ public class ExtAudioRecorder
 {
     private final static int[] sampleRates = {44100, 22050, 11025, 8000};
 
-    public static ExtAudioRecorder getInstanse(Boolean recordingCompressed)
+    public static ExtAudioRecorder getInstance(Boolean recordingCompressed)
     {
         ExtAudioRecorder result = null;
 
@@ -238,7 +238,7 @@ public class ExtAudioRecorder
     /**
      * Sets output file path, call directly after construction/reset.
      *
-     * @param output file path
+     * @param argPath output file path
      *
      */
     public void setOutputFile(String argPath)
