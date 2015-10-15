@@ -1,5 +1,6 @@
 package com.soundbytes;
 
+import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -16,7 +17,7 @@ import android.widget.TextView;
 public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
     private String title;
     private RecordButton r;
-    private MediaRecorder mRecorder = null;
+    private ExtAudioRecorder mRecorder = null;
 
     private PlayButton p = null;
     private MediaPlayer mPlayer = null;
@@ -42,9 +43,9 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
 
         // set up MediaRecorder and outFileName for the RecordButton
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
+        mFileName += "/audiorecordtest.wav";
         r.SetOutFileName(mFileName);
-        r.SetMediaRecorder(mRecorder);
+        r.SetAudioRecorder(mRecorder);
 
         // get PlayButton
         p = (PlayButton) view.findViewById(R.id.play_button);

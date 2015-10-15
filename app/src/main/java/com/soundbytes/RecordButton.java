@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.widget.ImageButton;
 
 import android.os.Handler;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -30,9 +34,16 @@ public class RecordButton extends ImageButton {
     private float angleSweep = 0;
     private long startTime;
     private RecordButtonListeners recordListener;
-    private MediaRecorder mRecorder = null;
+    private ExtAudioRecorder mRecorder = null;
     private String mFileName = null;
+    private Thread recordingThread = null;
+
     private static final String LOG_TAG = "AudioRecordTest";
+    private static final int RECORDER_SAMPLERATE = 8000;
+    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+    private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+
+
 
     boolean mStartRecording = true;
 
@@ -72,10 +83,10 @@ public class RecordButton extends ImageButton {
         updateHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(isRecording()) {
-                    angleSweep = ((System.currentTimeMillis() - startTime)*360f)/SoundByteConstants.TIME_LIMIT;
+                if (isRecording()) {
+                    angleSweep = ((System.currentTimeMillis() - startTime) * 360f) / SoundByteConstants.TIME_LIMIT;
                     updateHandler.postDelayed(this, 10);
-                }else
+                } else
                     angleSweep = 0;
                 invalidate();
             }
@@ -130,7 +141,7 @@ public class RecordButton extends ImageButton {
         canvas.drawArc(rect, 270, angleSweep, false, paint);
     }
 
-    public void SetMediaRecorder(MediaRecorder m)
+    public void SetAudioRecorder(ExtAudioRecorder m)
     {
         mRecorder = m;
     }
@@ -157,27 +168,27 @@ public class RecordButton extends ImageButton {
             stopRecording();
     }
 
+    int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
+    int BytesPerElement = 2; // 2 bytes in 16bit format
+
     private void startRecording()
     {
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder = ExtAudioRecorder.getInstanse(false);
+
         mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        try{
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        }
-
+        mRecorder.prepare();
         mRecorder.start();
     }
+
+
 
     private void stopRecording()
     {
         mRecorder.stop();
         mRecorder.release();
-        mRecorder = null;
+
+        //FilterManager fm = new FilterManager(mFileName);
+        //fm.Speedup();
     }
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {

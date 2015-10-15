@@ -2,6 +2,7 @@ package com.soundbytes;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -23,6 +24,12 @@ public class PlayButton extends ImageButton
     public PlayButton(Context ctx)
     {
         super(ctx);
+        setOnClickListener(clicker);
+    }
+
+    public PlayButton(Context ctx, AttributeSet attrs)
+    {
+        super(ctx, attrs);
         setOnClickListener(clicker);
     }
 
