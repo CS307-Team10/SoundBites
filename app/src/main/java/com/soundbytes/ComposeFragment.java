@@ -17,7 +17,7 @@ import android.widget.TextView;
 public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
     private String title;
     private RecordButton r;
-    private ExtAudioRecorder mRecorder = null;
+    private MediaRecorder mRecorder = null;
 
     private PlayButton p = null;
     private MediaPlayer mPlayer = null;
@@ -43,7 +43,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
 
         // set up MediaRecorder and outFileName for the RecordButton
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.wav";
+        mFileName += "/audiorecordtest.3gp";
         r.SetOutFileName(mFileName);
         r.SetAudioRecorder(mRecorder);
 

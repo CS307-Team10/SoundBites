@@ -1,56 +1,37 @@
 package com.soundbytes;
 
+import android.media.MediaCodec;
+import android.media.MediaFormat;
+
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
 
 /**
  * Created by Joe on 10/14/2015.
  */
 public class FilterManager
 {
-    private WavFile audioByte = null;
+    private String audioName = null;
+    private MediaCodec mCodec;
 
     public FilterManager(String inputAudio)
     {
+        audioName = inputAudio;
+
         try {
-            // open the wav file as input
-            audioByte = WavFile.openWavFile(new File(inputAudio));
-        }
-        catch (Exception e)
-        {
-            System.err.println(e);
+            mCodec = MediaCodec.createDecoderByType(audioName);
+        } catch(IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public WavFile Speedup()
+    public void Speedup()
     {
-        WavFile tempFile = audioByte;
+        
 
-        int numChannels = tempFile.getNumChannels();
-
-        double[] buffer = new double[100 * numChannels];
-
-        int framesRead = 0;
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
-
-        do
-        {
-            try
-            {
-                framesRead = tempFile.readFrames(buffer, 100);
-            }
-            catch (Exception e)
-            {
-                System.err.println(e);
-            }
-
-            for(int s = 0; s < framesRead * numChannels; s++)
-            {
-                System.out.println(buffer[s]);
-            }
-
-        }while(framesRead != 0);
-
-        return tempFile;
     }
+
+
 }
