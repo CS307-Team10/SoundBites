@@ -65,7 +65,7 @@ public class PlayButton extends ImageButton
 
     private void startPlaying()
     {
-        final float playbackSpeed = 0.8f;
+        final float playbackSpeed = 1.0f;
         SoundPool sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         final int soundId = sp.load(mFileName, 1);
         AudioManager mgr = (AudioManager) this.getContext().getSystemService(Context.AUDIO_SERVICE);
