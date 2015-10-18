@@ -2,7 +2,10 @@ package com.soundbytes;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -15,7 +18,9 @@ public class AudioTrackView extends LinearLayout {
     private int trackId = -1;
     private AudioTrackMeterView meter;
     private AudioTrackController controller;
-
+    private GestureDetector mDetector;
+    private float previousX = 0;
+    private float previousY = 0;
     public AudioTrackView(Context c){
         super(c);
         init();
@@ -39,6 +44,7 @@ public class AudioTrackView extends LinearLayout {
         //attach playButton onClickListener
         playButton.setOnClickListener(createPlayOnClickListener());
         playButton.setTag(true);
+        mDetector = new GestureDetector(getContext(), new GestureListener());
     }
 
     public void registerController(AudioTrackController controller, int trackId){
@@ -68,6 +74,33 @@ public class AudioTrackView extends LinearLayout {
         }
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        boolean result = mDetector.onTouchEvent(event);
+        if(!result) {
+            result = super.onTouchEvent(event);
+        }
+        if((event.getAction() == MotionEvent.ACTION_UP) || (event.getAction() == MotionEvent.ACTION_CANCEL))
+            getParent().getParent().requestDisallowInterceptTouchEvent(false);
+        else if(event.getAction() == MotionEvent.ACTION_MOVE){
+            Log.v("touch", "move");
+            float x = event.getX();
+            float y = event.getY();
+            if(Math.abs(x - previousX) > 4*Math.abs(y - previousY))
+                getParent().getParent().requestDisallowInterceptTouchEvent(true);
+            previousX = x;
+            previousY = y;
+        }
+        return result;
+    }
+
+    public void delete(){
+        if(controller == null){
+            throw new NullPointerException("Audio controller not set");
+        }
+        controller.deleteTrack(this, trackId);
+    }
+
     private OnClickListener createPlayOnClickListener(){
         return new OnClickListener() {
             @Override
@@ -75,5 +108,13 @@ public class AudioTrackView extends LinearLayout {
                 AudioTrackView.this.playButtonClicked();
             }
         };
+    }
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
+            Log.v("Gesture", "Fling " + velocityX + " " + velocityY);
+            return false;
+        }
     }
 }
