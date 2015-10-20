@@ -1,4 +1,4 @@
-package co.soundbytes.soundbytes;
+package com.soundbytes.soundbytes;
 
 
 import android.app.ProgressDialog;

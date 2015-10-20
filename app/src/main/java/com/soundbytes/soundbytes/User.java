@@ -1,4 +1,4 @@
-package co.soundbytes.soundbytes;
+package com.soundbytes.soundbytes;
 
 
 public class User {
