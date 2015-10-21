@@ -7,5 +7,6 @@ public interface AudioTrackController {
     void playTrack(int trackId);
     void pauseTrack(int trackId);
     void deleteTrack(AudioTrackView track, int trackId);
-    void applyFilter(int trackId);//TODO complete to show what kind of filter
+    void applyFilter(int trackId, int filterIndex);
+    void pauseAllAudio();
 }

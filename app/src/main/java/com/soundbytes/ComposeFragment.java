@@ -18,8 +18,14 @@ import android.widget.TextView;
 public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
     private String title;
     private AudioTrackView selectedTrack;
+    private RecordButton recordButton;
+    private int trackCount = 0;
+
 
     @Override
+    /**
+     * This returns the title of the fragment
+     */
     public String getTitle(){
         //This is a work around since, the fragment isn't attached to the activity yet when this method is called
         if(title == null)
@@ -30,28 +36,48 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //Inflate the fragment
         View view = inflater.inflate(R.layout.fragment_compose_audio, container, false);
-        ((RecordButton)view.findViewById(R.id.mic_button)).setRecordListener(this);
+        //Find the record button and set the listener
+        recordButton = ((RecordButton) view.findViewById(R.id.mic_button));
+        recordButton.setRecordListener(this);
         return view;
     }
 
     @Override
+    /**
+     * This method is called when the recordButton is help down,
+     * the user expects audio to begin recording, this method adds a new audioTrackView to the layout
+     */
     public void onStartRecording(){
         AudioTrackView track = createTrack();
+        //Add the new audioTrack to layout
         addTrackToLayout(track);
+        //Register this fragment with the AudioTrack in order to receive onPlay
+        //onPause e.t.c callbacks
         track.registerController(this, 1);
     }
 
     private AudioTrackView createTrack(){
+        //Return new AudioTrack
         return new AudioTrackView(getContext());
     }
 
     private void addTrackToLayout(AudioTrackView trackView){
+        //Find the layout
         LinearLayout layout = (LinearLayout) getView().findViewById(R.id.track_layout);
+        //Find the empty TextView
         TextView empty = (TextView)layout.findViewById(R.id.empty_text);
-            layout.removeView(empty);
+        //Remove the empty TextView from layout
+        layout.removeView(empty);
+        //Add the trackView to layout
         layout.addView(trackView);
+        //Setup the long press stuff
         registerForContextMenu(trackView);
+        //TODO replace the counter with an actual model
+        //Check if the limit has been reached then disable record button if so
+        if(++trackCount >= SoundByteConstants.MAX_TRACK_COUNT)
+            recordButton.setEnabled(false);
     }
 
     @Override
@@ -64,8 +90,12 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     @Override
+    /**
+     * This method is called when the user lifts their hand off from the recordButton,
+     * note that this gets called even if the user lifts their hand off well after the time limit has passed
+     */
     public void onStopRecording(){
-
+        //TODO stop recording audio
     }
 
     @Override
@@ -81,29 +111,56 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     @Override
+    /**
+     * This method is called when an audioTracks playButton is pressed.
+     * When this method is called, the user expects the track to play
+     * @param trackId this is the index of the track that a new filter needs to be applied to.
+     *                It's the id that's assigned to an audioTrackView on controller registration.
+     */
     public void playTrack(int trackId){
+        //TODO play audio track here
+    }
+
+    @Override
+    /**
+     * This method should pause all audio playing and call resetAudioButton() on all audioTrackViews
+     * currently in the layout.
+     * TODO iterate through the audioTrackViews and call resetAudioButton()
+     */
+    public void pauseAllAudio(){
 
     }
 
     @Override
+    /**
+     * This method is called when the pause button on an audioTrackView is pressed.
+     * The user expects the track to stop playing
+     * It might be beneficial to stop all other tracks that are playing
+     * @param trackId this is the index of the track that a new filter needs to be applied to.
+     *                It's the id that's assigned to an audioTrackView on controller registration.
+     */
     public void pauseTrack(int trackId){
-
+        //TODO
     }
 
     @Override
+    /**
+     * This only removes the audioTrackView from layout as of right now.
+     * TODO delete the audioTrack view from the model after removing from layout
+     * @param track this is the AudioTrackView that should be removed from the layout
+     * @param trackId this is the index of the track that a new filter needs to be applied to.
+     *                It's the id that's assigned to an audioTrackView on controller registration.
+     */
     public void deleteTrack(AudioTrackView track, int trackId){
         LinearLayout layout = (LinearLayout) getView().findViewById(R.id.track_layout);
+        //unregister the long press stuff
         unregisterForContextMenu(track);
+        //remove audioTrack from the layout
         layout.removeView(track);
+        //Check if the layout will be empty after removing the trackView
         if(layout.getChildCount() == 0){
+            //Since the layout is empty, add the empty text
             TextView empty = new TextView(getContext());
-            /*
-            <TextView
-                android:id="@+id/empty_text"
-                android:background="#dddddd"
-                android:layout_width="match_parent"
-                android:text="No recordings create one!"
-                android:layout_height="50dp" />*/
             empty.setId(R.id.empty_text);
             empty.setBackgroundColor(Color.parseColor("#dddddd"));
             empty.setText(R.string.no_audio_text);
@@ -111,10 +168,21 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
             empty.setLayoutParams(params);
             layout.addView(empty);
         }
+        //enable the record button, since the number of tracks is definitely less than the limit right now
+        recordButton.setEnabled(true);
+        trackCount--;
     }
 
     @Override
-    public void applyFilter(int trackId){
-
+    /**
+     * This is called when the track is swiped on, and the user expects to hear
+     * the new filter when play is pressed
+     * @param trackId this is the index of the track that a new filter needs to be applied to.
+     *                It's the id that's assigned to an audioTrackView on controller registration.
+     * @param filterIndex this is what would be used to identify the filter that should be applied
+     *                    the name of the filer it corresponds to can be gotten from SoundByteConstants.FILTER_NAMES
+     */
+    public void applyFilter(int trackId, int filterIndex){
+        //TODO
     }
 }

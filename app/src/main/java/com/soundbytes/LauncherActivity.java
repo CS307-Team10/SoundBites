@@ -37,6 +37,10 @@ public class LauncherActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * This is what launches the mainActivity, this methid is attached to the button in the xml file
+     * @param v the view that initiated this method
+     */
     public void launchMainActivity(View v){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
