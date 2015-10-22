@@ -14,4 +14,6 @@
     <string name="title_activity_main">SoundBytes</string>
     <string name="record_fragment_title">Mix it!</string>
     <string name="audio_recordings">Audio Recordings</string>
+    <string name="delete">Delete</string>
+    <string name="no_audio_text">No recordings create one!</string>
 </resources>

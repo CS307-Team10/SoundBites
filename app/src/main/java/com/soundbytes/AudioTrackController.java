@@ -6,6 +6,7 @@ package com.soundbytes;
 public interface AudioTrackController {
     void playTrack(int trackId);
     void pauseTrack(int trackId);
-    void deleteTrack(int trackId);
-    void applyFilter(int trackId);//TODO complete to show what kind of filter
+    void deleteTrack(AudioTrackView track, int trackId);
+    void applyFilter(int trackId, int filterIndex);
+    void pauseAllAudio();
 }
