@@ -23,6 +23,7 @@
             android:layout_height="match_parent" />
     </LinearLayout>
     <ListView
+        android:padding="10dp"
         android:layout_gravity="start"
         android:layout_width="250dp"
         android:background="#ffffff"
