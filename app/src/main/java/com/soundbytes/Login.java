@@ -1,4 +1,4 @@
-package com.soundbytes.soundbytes;
+package com.soundbytes;
 
 import android.app.AlertDialog;
 import android.content.Intent;

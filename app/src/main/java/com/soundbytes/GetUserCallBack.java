@@ -1,4 +1,4 @@
-package com.soundbytes.soundbytes;
+package com.soundbytes;
 
 /**
  * Created by naveenganessin on 7/10/15.

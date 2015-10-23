@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="co.soundbytes.soundbytes" >
+    package="com.soundbytes" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -24,7 +24,7 @@
             android:parentActivityName=".LauncherActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="co.soundbytes.soundbytes.LauncherActivity" />
+                android:value="com.soundbytes.LauncherActivity" />
         </activity>
         <activity
             android:name=".Login"
