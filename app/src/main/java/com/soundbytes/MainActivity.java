@@ -2,6 +2,7 @@ package com.soundbytes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ViewPager viewPager;
     private static MainActivity thisActivity;
+    UserLocalStore userLocalStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,23 @@ public class MainActivity extends AppCompatActivity {
         //Attach viewpager indicator
         TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.view_pager_indicator);
         indicator.setViewPager(viewPager);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!authenticate()){
+            startActivity(new Intent(MainActivity.this, Login.class));
+        }
+    }
+
+    private boolean authenticate(){
+        if (userLocalStore.getLoggedInUser() == null) {
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            return false;
+        }
+        return true;
     }
 
     protected static Activity getMainActivity(){

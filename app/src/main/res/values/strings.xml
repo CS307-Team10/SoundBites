@@ -16,4 +16,6 @@
     <string name="audio_recordings">Audio Recordings</string>
     <string name="delete">Delete</string>
     <string name="no_audio_text">No recordings create one!</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_register">Register</string>
 </resources>
