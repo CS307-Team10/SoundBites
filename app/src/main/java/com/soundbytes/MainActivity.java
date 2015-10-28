@@ -9,8 +9,8 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button bLogout;
-    EditText etName, etAge, etUsername;
+    Button bLogout, bAddFriend;
+    EditText etName, etAge, etUsername, etAddFriend;
     UserLocalStore userLocalStore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +19,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etName = (EditText)findViewById(R.id.etName);
         etAge = (EditText)findViewById(R.id.etAge);
         etUsername = (EditText)findViewById(R.id.etUsername);
+        etAddFriend = (EditText)findViewById(R.id.etAddFriend);
         bLogout = (Button)findViewById(R.id.bLogout);
         bLogout.setOnClickListener(this);
+        bAddFriend = (Button)findViewById(R.id.bAddFriend);
+        bAddFriend.setOnClickListener(this);
         userLocalStore = new UserLocalStore(this);
     }
 
@@ -59,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, Login.class));
 
                 break;
+            case R.id.bAddFriend:
+                String addFriend = etAddFriend.getText().toString();
+
         }
     }
 }
