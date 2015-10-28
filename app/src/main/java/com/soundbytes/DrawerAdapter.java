@@ -16,6 +16,7 @@ public class DrawerAdapter extends BaseAdapter {
     private Context mContext;
     private String[] infoName;
     private String[] infoContent;
+    private User user;
 
     /**
      * Constructor
@@ -31,9 +32,10 @@ public class DrawerAdapter extends BaseAdapter {
      * Initialization method to avoid copying the same thing in every constructor
      */
     private void init(){
-        //These are temporary variables that would be replaced when fully integrated with Naveens code
+        UserLocalStore store = new UserLocalStore(mContext);
+        user = store.getLoggedInUser();
         infoName = new String[]{"", "Name", "Username", "Age", "Logout"};
-        infoContent = new String[]{"", "Mr No Name", "@Username", "69", "Logout"};
+        infoContent = new String[]{"", user.name, "@"+user.username, user.age+"", "Logout"};
     }
 
     @Override

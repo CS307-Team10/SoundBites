@@ -25,13 +25,6 @@ import android.widget.TextView;
  */
 public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
     private String title;
-    private RecordButton r;
-    private MediaRecorder mRecorder = null;
-
-    private PlayButton p = null;
-    private MediaPlayer mPlayer = null;
-
-    private static String mFileName = null;
     private AudioTrackView selectedTrack;
     private RecordButton recordButton;
     private int trackCount = 0;
@@ -52,59 +45,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Inflate the fragment
         View view = inflater.inflate(R.layout.fragment_compose_audio, container, false);
-
-        // get RecordButton
-        r = (RecordButton) view.findViewById(R.id.mic_button);
-        r.setRecordListener(this);
-
-        // set up MediaRecorder and outFileName for the RecordButton
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
-        r.SetOutFileName(mFileName);
-        r.SetAudioRecorder(mRecorder);
-
-        // get PlayButton
-        p = (PlayButton) view.findViewById(R.id.play_button);
-        p.SetOutFileName(mFileName);
-        p.SetMediaPlayer(mPlayer);
-
-        Button f1 = (Button) view.findViewById(R.id.filter_1);
-        Button f2 = (Button) view.findViewById(R.id.filter_2);
-        Button f3 = (Button) view.findViewById(R.id.filter_3);
-        Button f4 = (Button) view.findViewById(R.id.filter_4);
-
-        final FilterManager fm = new FilterManager(mFileName,getContext());
-
-        f1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.Speedup();
-            }
-        });
-
-        f2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.Slowdown();
-            }
-        });
-
-        f3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.HighPitch();
-            }
-        });
-
-        f4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.LowPitch();
-            }
-        });
-
-
-        //Find the record button and set the listener
+      //Find the record button and set the listener
         recordButton = ((RecordButton) view.findViewById(R.id.mic_button));
         recordButton.setRecordListener(this);
         return view;
@@ -251,7 +192,4 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     public void applyFilter(int trackId, int filterIndex){
         //TODO
     }
-
-
-
 }

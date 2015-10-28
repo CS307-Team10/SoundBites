@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         //Attach viewpager indicator
         TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.view_pager_indicator);
         indicator.setViewPager(viewPager);
+        userLocalStore = new UserLocalStore(this);
     }
 
     @Override
