@@ -149,6 +149,7 @@ public class ServerRequests {
             ArrayList<NameValuePair> datatoSend = new ArrayList<>();
 
             datatoSend.add(new BasicNameValuePair("username", user.username));
+            datatoSend.add(new BasicNameValuePair("password", user.password));
 
             HttpParams httpRequestParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);

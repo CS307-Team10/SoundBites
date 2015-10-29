@@ -65,7 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bAddFriend:
                 String friendName = etAddFriend.getText().toString();
-                User user = new User(friendName);
+                User cUser = userLocalStore.getLoggedInUser();
+                String currentUser = cUser.username;
+                User user = new User(friendName, currentUser, -2);
                 authenticate(user);
         }
     }
