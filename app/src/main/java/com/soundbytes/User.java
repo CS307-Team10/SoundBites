@@ -17,4 +17,10 @@ public class User {
         this.age = -1;
         this.name = "";
     }
+    public User(String username){
+        this.username = username;
+        this.password = "";
+        this.age = -1;
+        this.name = "";
+    }
 }

@@ -1,5 +1,6 @@
 package com.soundbytes;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,8 +64,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.bAddFriend:
-                String addFriend = etAddFriend.getText().toString();
-
+                String friendName = etAddFriend.getText().toString();
+                User user = new User(friendName);
+                authenticate(user);
         }
     }
+
+    private void authenticate(User user){
+        ServerRequests serverRequests = new ServerRequests(this);
+        serverRequests.addFriendDataInBackground(user, new GetUserCallBack() {
+            @Override
+            public void done(User returnedUser) {
+                if (returnedUser == null) {
+                    showErrorMessage();
+                } else {
+                    System.out.println("name:" + returnedUser.name);
+                    System.out.println("name:" + returnedUser.age);
+                    System.out.println("added friend successfully!");
+                    showSuccessMessage();
+                }
+            }
+        });
+    }
+
+    private void showErrorMessage(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        dialogBuilder.setMessage("nonexistent friend");
+        dialogBuilder.setPositiveButton("ok", null);
+        dialogBuilder.show();
+    }
+
+    private void showSuccessMessage(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        dialogBuilder.setMessage("Friend added successfully");
+        dialogBuilder.setPositiveButton("ok", null);
+        dialogBuilder.show();
+    }
+
 }
