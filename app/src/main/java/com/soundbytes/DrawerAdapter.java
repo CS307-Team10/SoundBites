@@ -17,13 +17,15 @@ public class DrawerAdapter extends BaseAdapter {
     private String[] infoName;
     private String[] infoContent;
     private User user;
+    private View.OnClickListener onClick;
 
     /**
      * Constructor
      * @param context The activity context
      */
-    public DrawerAdapter(Context context){
+    public DrawerAdapter(Context context, View.OnClickListener onClick){
         mContext = context;
+        this.onClick = onClick;
         //Initialize the object
         init();
     }
@@ -109,6 +111,7 @@ public class DrawerAdapter extends BaseAdapter {
                 logout = (Button)convertView;
             }
             logout.setText(infoName[position]);
+            logout.setOnClickListener(onClick);
             view = logout;
         }
         return view;

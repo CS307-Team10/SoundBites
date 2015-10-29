@@ -57,16 +57,18 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         if(!authenticate()){
             startActivity(new Intent(MainActivity.this, Login.class));
+            finish();
         }
     }
 
     private boolean authenticate(){
-        if (userLocalStore.getLoggedInUser() == null) {
-            Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
-            return false;
-        }
-        return true;
+        return userLocalStore.getUserLoggedIn();
+//        if (userLocalStore.getLoggedInUser() == null) {
+//            Intent intent = new Intent(this, Login.class);
+//            startActivity(intent);
+//            return false;
+//        }
+//        return true;
     }
 
     protected static Activity getMainActivity(){
@@ -80,10 +82,21 @@ public class MainActivity extends AppCompatActivity {
         //find the nav drawer listView
         ListView listView = (ListView)findViewById(R.id.drawer_list_view);
         //Create a new adpater for the listView and attach it
-        DrawerAdapter adapter = new DrawerAdapter(this);
+        DrawerAdapter adapter = new DrawerAdapter(this, logOutOnClickListener());
         listView.setAdapter(adapter);
     }
 
+    private View.OnClickListener logOutOnClickListener(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userLocalStore.clearUserData();
+                userLocalStore.setUserLoggedin(false);
+                startActivity(new Intent(MainActivity.this, Login.class));
+                finish();
+            }
+        };
+    }
     /**
      * This is what determines which swipe screen we have in mainActivity
      * @return an ArrayList of the fragments that would be added to the viewpager
