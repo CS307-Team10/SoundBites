@@ -26,7 +26,52 @@ android:layout_height="match_parent">
         android:layout_height="wrap_content"
         android:text="MainActivity"/>
 
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="High Pitch"
+        android:id="@+id/rbHighPitch"
+        android:layout_gravity="center_horizontal"
+        android:checked="false" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="low Pitch"
+        android:id="@+id/rbLowPitch"
+        android:layout_gravity="center_horizontal"
+        android:checked="false" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speed Up"
+        android:id="@+id/rbSpeedUp"
+        android:layout_gravity="center_horizontal"
+        android:checked="false" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Slow Down"
+        android:id="@+id/rbSlowDown"
+        android:layout_gravity="center_horizontal"
+        android:checked="false" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etFriendNameSend"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/bSendFriend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload Friend details"/>
+
 </LinearLayout>
 
 </ScrollView>
+
 

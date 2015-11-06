@@ -31,23 +31,30 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 
 public class SendActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private static final int RESULT_LOAD_IMAGE = 1;
+    public static final int CONNECTION_TIMEOUT = 1000 * 15;
     private static final String SERVER_ADDRESS = "http://naveenganessin.com/";
-    Button bUploadImage, bMainBack;
-    EditText uploadImageName;
+    Button bUploadImage, bMainBack, bSendFriend;
+    EditText uploadImageName, FriendNameSend;
     File file = null;
+    UserLocalStore userLocalStore;
     String selectedPath = Environment.getExternalStorageDirectory() + "/audiorecordtest.3gp";
-
+    User cUser;
+    String uName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
         bUploadImage = (Button) findViewById(R.id.bUploadImage);
         bMainBack = (Button) findViewById(R.id.bMainBack);
+        bSendFriend = (Button)findViewById(R.id.bSendFriend);
         uploadImageName = (EditText) findViewById(R.id.etUploadName);
+        FriendNameSend = (EditText) findViewById(R.id.etFriendNameSend);
         bUploadImage.setOnClickListener(this);
         bMainBack.setOnClickListener(this);
+        bSendFriend.setOnClickListener(this);
+        Bundle bundle = getIntent().getExtras();
+        uName = bundle.getString("uName");
+        System.out.println("name: " + uName);
     }
 
     @Override
@@ -65,6 +72,64 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bMainBack:
                 startActivity(new Intent(SendActivity.this, MainActivity.class));
+                break;
+            case R.id.bSendFriend:
+                //System.out.println(userLocalStore.getLoggedInUser().name);
+                System.out.println(FriendNameSend.getText().toString());
+                System.out.println("inside bPress: " + uName);
+                new uploadFriendDetails(uName , FriendNameSend.getText().toString(), 0, 0, 0, 0).execute();
+                break;
+        }
+    }
+
+    private class uploadFriendDetails extends AsyncTask<Void, Void, Void> {
+        String userName;
+        String friendName;
+        int highPitch;
+        int lowPitch;
+        int speedUp;
+        int slowDown;
+
+        public uploadFriendDetails(String userName, String friendName, int highPitch, int lowPitch, int speedUp, int slowDown) {
+            this.userName = userName;
+            this.friendName = friendName;
+            this.highPitch = highPitch;
+            this.lowPitch = lowPitch;
+            this.speedUp = speedUp;
+            this.slowDown = slowDown;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<NameValuePair> datatoSend = new ArrayList<>();
+            datatoSend.add(new BasicNameValuePair("userName", userName));
+            datatoSend.add(new BasicNameValuePair("friendName", friendName));
+            datatoSend.add(new BasicNameValuePair("highPitch", highPitch + ""));
+            datatoSend.add(new BasicNameValuePair("lowPitch", lowPitch+""));
+            datatoSend.add(new BasicNameValuePair("speedUp", speedUp+""));
+            datatoSend.add(new BasicNameValuePair("slowDown", slowDown+""));
+
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS+ "updateUserDetails.php");
+            try {
+                post.setEntity(new UrlEncodedFormEntity(datatoSend));
+                client.execute(post);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            System.out.println("Friend Details Uploaded");
+            Toast.makeText(getApplicationContext(), "Friend Details Uploaded", Toast.LENGTH_SHORT).show();
         }
     }
 

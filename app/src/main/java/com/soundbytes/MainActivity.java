@@ -75,7 +75,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 authenticate(user);
                 break;
             case R.id.bSend:
-                startActivity(new Intent(MainActivity.this, SendActivity.class));
+                User cuUser = userLocalStore.getLoggedInUser();
+                String uName = cuUser.username;
+                Intent intent = new Intent(MainActivity.this, SendActivity.class);
+                intent.putExtra("uName", uName);
+                System.out.println("uName" + uName);
+                startActivity(intent);
                 break;
         }
     }

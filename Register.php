@@ -14,7 +14,12 @@
     
     $statement2 = "CREATE TABLE $username(
         id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        friendName VARCHAR(30) NOT NULL)";
+        friendName VARCHAR(30) NOT NULL,
+        fileName VARCHAR(30) NOT NULL,
+        highPitch INT(6) NOT NULL,
+        lowPitch INT(6) NOT NULL,
+        speedUp INT(6) NOT NULL,
+        slowDown INT(6) NOT NULL)";
     
     if($con->query($statement2) === TRUE){
         echo "Table successfully created!";
