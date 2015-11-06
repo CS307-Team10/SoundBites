@@ -10,7 +10,7 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button bLogout, bAddFriend;
+    Button bLogout, bAddFriend, bSend;
     EditText etName, etAge, etUsername, etAddFriend;
     UserLocalStore userLocalStore;
     @Override
@@ -25,12 +25,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bLogout.setOnClickListener(this);
         bAddFriend = (Button)findViewById(R.id.bAddFriend);
         bAddFriend.setOnClickListener(this);
+        bSend = (Button)findViewById(R.id.bSend);
+        bSend.setOnClickListener(this);
         userLocalStore = new UserLocalStore(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        System.out.println("loginStatus: " + userLocalStore.getUserLoggedIn());
         if(authenticate()){
             displayUserDetails();
         } else {
@@ -39,7 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean authenticate(){
-        if (userLocalStore.getLoggedInUser() == null) {
+        if (!userLocalStore.getUserLoggedIn() || userLocalStore.getLoggedInUser() == null) {
+            System.out.println("user not logged in");
             Intent intent = new Intent(this, Login.class);
             startActivity(intent);
             return false;
@@ -69,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String currentUser = cUser.username;
                 User user = new User(friendName, currentUser, -2);
                 authenticate(user);
+                break;
+            case R.id.bSend:
+                startActivity(new Intent(MainActivity.this, SendActivity.class));
+                break;
         }
     }
 
