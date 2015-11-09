@@ -24,6 +24,7 @@
         <LinearLayout
             android:background="#180d95d4"
             android:padding="5dp"
+            android:animateLayoutChanges="true"
             android:id="@+id/track_layout"
             android:orientation="vertical"
             android:layout_below="@+id/audio_recordings"
@@ -95,7 +96,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/imageButton" />
-            <com.soundbytes.PlayButton
+            <com.soundbytes.views.PlayButton
                 android:contentDescription="@string/play_button_desc"
                 android:scaleType="fitXY"
                 android:layout_toLeftOf="@+id/mic_button"
@@ -106,7 +107,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/play_button" />
-            <com.soundbytes.RecordButton
+            <com.soundbytes.views.RecordButton
                 android:contentDescription="@string/record_audio_button_desc"
                 android:layout_below="@+id/add_layout"
                 android:elevation="5dp"

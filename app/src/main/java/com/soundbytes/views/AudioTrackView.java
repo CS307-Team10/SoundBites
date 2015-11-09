@@ -1,19 +1,25 @@
-package com.soundbytes;
+package com.soundbytes.views;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+
+import com.soundbytes.AudioTrackController;
+import com.soundbytes.R;
 
 /**
  * Created by Olumide on 10/5/2015.
  */
-public class AudioTrackView extends LinearLayout {
+public class AudioTrackView extends RelativeLayout {
     private ImageButton playButton;
     private int trackId = -1;
     private AudioTrackMeterView meter;
@@ -70,6 +76,14 @@ public class AudioTrackView extends LinearLayout {
 
         //initialize the gesture detector object
         mDetector = new GestureDetector(getContext(), new GestureListener());
+    }
+
+    public void setHeightInDP(int dp){
+        Resources r = getResources();
+        int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, px);
+        setLayoutParams(params);
+        invalidate();
     }
 
     /**

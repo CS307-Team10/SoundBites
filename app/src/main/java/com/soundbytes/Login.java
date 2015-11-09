@@ -53,12 +53,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         ServerRequests serverRequests = new ServerRequests(this);
         serverRequests.fetchUserDataInBackground(user, new GetUserCallBack() {
             @Override
-            public void done(User returnedUser) {
+            public void done(final User returnedUser) {
                 if (returnedUser == null) {
                     showErrorMessage();
                 } else {
-                    logUserIn(returnedUser);
-                }
+                    new GCMRegistration(Login.this, returnedUser, new GCMRegistration.OnKeyStoredCallback(){
+                        @Override
+                        public void onKeyStored(boolean stored){
+                            logUserIn(returnedUser);
+                        }
+                    }).register();                }
             }
         });
     }

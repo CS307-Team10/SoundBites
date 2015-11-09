@@ -1,4 +1,4 @@
-package com.soundbytes;
+package com.soundbytes.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.soundbytes.R;
 
 /**
  * Created by Olumide on 10/21/2015.

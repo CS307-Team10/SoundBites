@@ -41,6 +41,10 @@ public class ServerRequests {
         new fetchUserDataAsyncTask(user, callBack).execute();
     }
 
+    public void storeUserKeyInBackground(User user, String key, GetUserCallBack callBack){
+        new StoreUserGCMKey(user, key, callBack).execute();
+    }
+
     public class StoreUserDataAsyncTask extends AsyncTask<Void, Void, Void>{
         User user;
         GetUserCallBack userCallBack;
@@ -129,6 +133,45 @@ public class ServerRequests {
             progressDialog.dismiss();
             userCallBack.done(returnedUser);
             super.onPostExecute(returnedUser);
+        }
+    }
+
+    public class StoreUserGCMKey extends AsyncTask<Void, Void, Void>{
+        User user;
+        String key;
+        GetUserCallBack userCallBack;
+
+        String SERVER_ADDRESS = "http://olu.mide.co/Random/CS307/";
+        public StoreUserGCMKey(User user, String key, GetUserCallBack userCallBack){
+            this.user = user;
+            this.key = key;
+            this.userCallBack = userCallBack;
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<NameValuePair> datatoSend = new ArrayList<>();
+            datatoSend.add(new BasicNameValuePair("username", user.username));
+            datatoSend.add(new BasicNameValuePair("key", key));
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS+ "SaveKey.php");
+            try {
+                post.setEntity(new UrlEncodedFormEntity(datatoSend));
+                client.execute(post);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            userCallBack.done(null);
+            super.onPostExecute(aVoid);
         }
     }
 }

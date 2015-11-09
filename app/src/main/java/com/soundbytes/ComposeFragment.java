@@ -1,11 +1,7 @@
 package com.soundbytes;
 
 
-import android.media.AudioRecord;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.graphics.Color;
 import android.view.ContextMenu;
 
@@ -14,11 +10,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.AdapterView;
 
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.soundbytes.views.AudioTrackView;
+import com.soundbytes.views.RecordButton;
 
 /**
  * Created by Olumide on 10/3/2015.
@@ -67,7 +64,9 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
 
     private AudioTrackView createTrack(){
         //Return new AudioTrack
-        return new AudioTrackView(getContext());
+        AudioTrackView track = new AudioTrackView(getContext());
+        track.setHeightInDP(54);
+        return track;
     }
 
     private void addTrackToLayout(AudioTrackView trackView){

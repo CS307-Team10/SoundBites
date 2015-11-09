@@ -1,4 +1,4 @@
-package com.soundbytes;
+package com.soundbytes.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+
+import com.soundbytes.SoundByteConstants;
 
 import java.util.Iterator;
 import java.util.LinkedList;

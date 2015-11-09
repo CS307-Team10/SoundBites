@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<TitledFragment> fragmentList = new ArrayList<>();
         //Add fragments here
         fragmentList.add(new ComposeFragment());
-        fragmentList.add(new EmptyFragment());
+        fragmentList.add(new NewsFeedFragment());
         return  fragmentList;
     }
 

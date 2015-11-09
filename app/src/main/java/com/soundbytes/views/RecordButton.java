@@ -1,4 +1,4 @@
-package com.soundbytes;
+package com.soundbytes.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -18,6 +18,9 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import android.os.Handler;
+
+import com.soundbytes.RecordButtonListeners;
+import com.soundbytes.SoundByteConstants;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -107,7 +110,7 @@ public class RecordButton extends ImageButton {
             public void run() {
                 if(isRecording()) {
                     //stuff used in the visualization
-                    angleSweep = ((System.currentTimeMillis() - startTime)*360f)/SoundByteConstants.TIME_LIMIT;
+                    angleSweep = ((System.currentTimeMillis() - startTime)*360f)/ SoundByteConstants.TIME_LIMIT;
 
                     updateHandler.postDelayed(this, 10);
                 } else
