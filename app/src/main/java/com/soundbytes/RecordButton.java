@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
@@ -24,11 +25,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Timer;
 
 /**
  * Created by Joe on 10/7/2015.
  */
-public class RecordButton extends ImageButton {
+public class RecordButton extends ImageButton implements RecordButtonListeners {
     private Paint paint;
     private RectF rect;
     private Handler updateHandler;
@@ -40,6 +42,8 @@ public class RecordButton extends ImageButton {
     private RecordButtonListeners recordListener;
     private MediaRecorder mRecorder = null;
     private String mFileName = null;
+    private CountDownTimer t;
+    private boolean timerExpired = false;
 
     private static final String LOG_TAG = "AudioRecordTest";
 
@@ -69,6 +73,7 @@ public class RecordButton extends ImageButton {
 
     public void setRecordListener(RecordButtonListeners listener){
         recordListener = listener;
+
     }
     private void init(){
         paint = new Paint();
@@ -127,11 +132,13 @@ public class RecordButton extends ImageButton {
         if(!result) {
             result = super.onTouchEvent(event);
         }
-        if((!isPressed() || (event.getAction() == MotionEvent.ACTION_UP)) && isRecording()) {
+        if((!isPressed() || (event.getAction() == MotionEvent.ACTION_UP)) && isRecording() || timerExpired) {
             Log.v("Gesture", "stop " + event.getAction());
             isRecording = false;
             cleanUpHandlers();
             recordListener.onStopRecording();
+            t.cancel();
+            timerExpired = false;
         }
         return result;
     }
@@ -165,15 +172,37 @@ public class RecordButton extends ImageButton {
 
     private void onRecord(boolean start)
     {
-        if(start)
-            startRecording();
-        else
-            stopRecording();
+        //if(start)
+            //startRecording();
+        //else
+            //stopRecording();
     }
 
+    @Override
+    public void onStartRecording() {
+        t = new CountDownTimer(6000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d("TIMER", millisUntilFinished + "");
+            }
+
+            @Override
+            public void onFinish() {
+                timerExpired = true;
+            }
+        };
+        t.start();
+        startRecording();
+    }
+
+    @Override
+    public void onStopRecording() {
+        stopRecording();
+    }
 
     private void startRecording()
     {
+        Log.d("HI","Starting Recording");
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -193,6 +222,7 @@ public class RecordButton extends ImageButton {
 
     private void stopRecording()
     {
+        Log.d("HI","Stopping Recording");
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;

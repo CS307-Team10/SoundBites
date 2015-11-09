@@ -40,7 +40,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         View view = inflater.inflate(R.layout.fragment_compose_audio, container, false);
         // get RecordButton
         r = (RecordButton) view.findViewById(R.id.mic_button);
-        r.setRecordListener(this);
+        r.setRecordListener(r);
 
         // set up MediaRecorder and outFileName for the RecordButton
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
