@@ -13,14 +13,16 @@ import com.soundbytes.views.SoundByteFeedView;
 public class NewsFeedAdapter extends BaseAdapter{
     private Context mContext;
     private FeedDatabaseHandler dbHandler;
+    private NewsFeedFragment feedFragment;
 
     /**
      * Constructor
      * @param context The activity context
      */
-    public NewsFeedAdapter(Context context, FeedDatabaseHandler databaseHandler){
+    public NewsFeedAdapter(Context context, FeedDatabaseHandler databaseHandler, NewsFeedFragment feedFragment){
         this.mContext = context;
         this.dbHandler = databaseHandler;
+        this.feedFragment = feedFragment;
     }
 
     @Override
@@ -55,14 +57,17 @@ public class NewsFeedAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SoundByteFeedObject feedObject = dbHandler.getFeedObject(position);
-
+        SoundByteFeedView feedView;
         if ((convertView != null) && convertView instanceof SoundByteFeedView){
-            ((SoundByteFeedView)convertView).populate(feedObject);
-            return convertView;
+            feedView = (SoundByteFeedView)convertView;
         }else {
-            SoundByteFeedView feedView = new SoundByteFeedView(mContext);
-            feedView.populate(feedObject);
-            return feedView;
+            feedView = new SoundByteFeedView(mContext);
         }
+        feedView.populate(feedObject, feedFragment);
+        if(feedFragment.isTrackCurrentlyPlaying(feedObject.getId())){
+            feedView.expand();
+            feedView.setPauseButton();
+        }
+        return feedView;
     }
 }

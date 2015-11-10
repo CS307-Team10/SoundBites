@@ -23,6 +23,12 @@ public class LauncherActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+        launchMainActivity();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -37,13 +43,17 @@ public class LauncherActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void launchMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     /**
      * This is what launches the mainActivity, this methid is attached to the button in the xml file
      * @param v the view that initiated this method
      */
     public void launchMainActivity(View v){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        launchMainActivity();
     }
 }

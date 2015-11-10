@@ -10,17 +10,18 @@ import android.widget.Toast;
 
 import com.soundbytes.db.DBHandlerResponse;
 import com.soundbytes.db.FeedDatabaseHandler;
+import com.soundbytes.views.AudioTrackView;
 
 /**
  * Created by Olumide on 11/4/2015.
  */
-public class NewsFeedFragment extends TitledFragment implements DBHandlerResponse {
+public class NewsFeedFragment extends TitledFragment implements DBHandlerResponse, AudioTrackController {
     private String title;
     private View viewLayout;
-    private LinearLayout linearLayout;// = (ViewGroup)findViewById(R.id.linearView);
     private ListView listView;
     private NewsFeedAdapter adapter;
     private FeedDatabaseHandler dbHandler;
+    private int currentlyPlaying = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,18 +45,52 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
         return title;
     }
 
-    /*private void populate(List<SoundByteFeedObject> soundByteObjects){
-        ListIterator iterator = soundByteObjects.listIterator(soundByteObjects.size());
-        while(iterator.hasPrevious()){
-            SoundByteFeedObject soundByteObject = (SoundByteFeedObject)iterator.previous();
-            SoundByteFeedView singleSoundByte = new SoundByteFeedView(getContext());
-            singleSoundByte.populate(soundByteObject);
-//            linearLayout.addView(singleSoundByte);
-        }
-    }*/
+    public boolean isTrackCurrentlyPlaying(int trackId){
+        return currentlyPlaying == trackId;
+    }
+
+    @Override
+    public void playTrack(int trackId){
+        pauseAllAudio();
+        currentlyPlaying = trackId;
+        //TODO play audio track here
+    }
+
+    /**
+     * This method should pause all audio playing and call resetAudioButton() on all audioTrackViews
+     * currently in the layout.
+     * TODO iterate through the audioTrackViews and call resetAudioButton()
+     */
+    @Override
+    public void pauseAllAudio(){
+        //Since only one audio can play at a time, it only has to pause one audio
+        currentlyPlaying = -1;
+    }
+
+    /**
+     * This method is called when the pause button on an audioTrackView is pressed.
+     * The user expects the track to stop playing
+     * It might be beneficial to stop all other tracks that are playing
+     * @param trackId this is the index of the track that a new filter needs to be applied to.
+     *                It's the id that's assigned to an audioTrackView on controller registration.
+     */
+    @Override
+    public void pauseTrack(int trackId){
+        //TODO
+    }
+
+    @Override
+    public void deleteTrack(AudioTrackView track, int trackId){
+        //Not used in this fragment
+    }
+
+    @Override
+    public void applyFilter(int trackId, int filterIndex){
+        //Not used in this fragment
+    }
 
     public void onDBReady(){
-        adapter = new NewsFeedAdapter(getContext(), dbHandler);
+        adapter = new NewsFeedAdapter(getContext(), dbHandler, this);
         listView.setAdapter(adapter);
         listView.invalidate();
     }

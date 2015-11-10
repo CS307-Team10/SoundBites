@@ -156,6 +156,11 @@ public class AudioTrackView extends RelativeLayout {
         playButton.setTag(true);
     }
 
+    public void setPauseButton(){
+        playButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_black_48dp));
+        playButton.setTag(false);
+    }
+
     @Override
     public void onDraw(Canvas canvas){
         super.onDraw(canvas);

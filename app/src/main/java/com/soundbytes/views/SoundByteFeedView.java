@@ -8,6 +8,7 @@ import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.soundbytes.AudioTrackController;
 import com.soundbytes.R;
 import com.soundbytes.SoundByteFeedObject;
 
@@ -15,50 +16,57 @@ import com.soundbytes.SoundByteFeedObject;
  * Created by Olumide on 11/8/2015.
  */
 public class SoundByteFeedView extends RelativeLayout {
-    private Context context;
     private AudioTrackView trackView;
+    private boolean isExpanded = false;
 
     public SoundByteFeedView(Context c){
         super(c);
-        init(c);
+        init();
     }
 
     public SoundByteFeedView(Context c, AttributeSet attributeSet){
         super(c, attributeSet);
-        init(c);
+        init();
     }
 
 
     public SoundByteFeedView(Context context, AttributeSet attr, int defStyle){
         super(context, attr, defStyle);
-        init(context);
+        init();
     }
 
-    private void init(Context context){
-        this.context = context;
+    private void init(){
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.soundbyte_feed_view, this);
-//        View view = View.inflate(this.context, R.layout.soundbyte_feed_view, false);
         trackView = (AudioTrackView)view.findViewById(R.id.feed_trackview);
     }
 
-    public void populate(SoundByteFeedObject soundByteFeedObject){
+    public void populate(SoundByteFeedObject soundByteFeedObject, AudioTrackController controller){
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 SoundByteFeedView.this.expand();
             }
         });
+        trackView.registerController(controller, soundByteFeedObject.getId());
+    }
+
+    public void setPauseButton(){
+        trackView.setPauseButton();
     }
 
     public void collapse(){
-        new RelativeLayout.LayoutParams(trackView.getWidth(),trackView.getHeight()).setMargins(0,0,0,trackView.getHeight());
-        RelativeLayout.LayoutParams rl2 = new RelativeLayout.LayoutParams(trackView.getWidth(),trackView.getHeight());
-        rl2.setMargins(0, 0, 0, -trackView.getHeight());
-        invalidate();
+        if(isExpanded) {
+            new RelativeLayout.LayoutParams(trackView.getWidth(), trackView.getHeight()).setMargins(0, 0, 0, trackView.getHeight());
+            RelativeLayout.LayoutParams rl2 = new RelativeLayout.LayoutParams(trackView.getWidth(), trackView.getHeight());
+            rl2.setMargins(0, 0, 0, -trackView.getHeight());
+            isExpanded = false;
+            invalidate();
+        }
     }
 
-    public void expand(){
+    public void expand() {
+        if (!isExpanded) {
 //        AbsListView.LayoutParams rl2 = new AbsListView.LayoutParams(getWidth(),trackView.getHeight()+getHeight());
 //        setLayoutParams(rl2);
 //        Toast.makeText(context, "expand", Toast.LENGTH_LONG).show();
@@ -67,5 +75,7 @@ public class SoundByteFeedView extends RelativeLayout {
 ////        rl.setMargins(trackView.getHeight(), 0, 0, 0);
 //        trackView.setLayoutParams(rl);
 //        trackView.invalidate();
+            isExpanded = true;
+        }
     }
 }
