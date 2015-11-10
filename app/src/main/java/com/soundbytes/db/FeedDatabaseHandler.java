@@ -25,7 +25,7 @@ import java.util.List;
 public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResponse{
     private static final String DB_NAME = "News_Feed";
     private static final String TABLE_NAME = "News_Feed";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
     private static final String ID = "id";
@@ -36,6 +36,7 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
     private static final String FRIEND = "friend";
     private static final String FILTER = "filter";
     private static final String SPEED = "playback_speed";
+    private static final String READ = "read";
     private SQLiteDatabase db = null;
     private Context context;
     private DBHandlerResponse dbHandlerResponse;
@@ -74,11 +75,10 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         Log.e("Db", "onCreate");
         this.db = db;//Just in case
         //TABLE FORMAT
-        //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
-        //ID | PICTURE PATH | CONCENTRATION| DATE | LONG | LAT | TIME | ICON PATH | HIDDEN | RGB | HSV |
+        //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED | READ
         String CREATE_TABLE =
-                String.format("CREATE TABLE IF NOT EXISTS %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s REAL)",
-                        TABLE_NAME, ID, IS_SENT, FRIEND, DATE, TIME, SOUND_PATH, FILTER, SPEED);
+                String.format("CREATE TABLE IF NOT EXISTS %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s REAL, %s TEXT)",
+                        TABLE_NAME, ID, IS_SENT, FRIEND, DATE, TIME, SOUND_PATH, FILTER, SPEED, READ);
         db.execSQL(CREATE_TABLE);
         Log.v("Db", "onCreate");
         cursor = db.rawQuery(SELECT_QUERY, null);
@@ -130,7 +130,7 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
 
         if(cursor.moveToFirst()){
             cursor.moveToPosition(id);
-            //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
+            //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED | READ
             sent = SoundByteConstants.SENT.equals(cursor.getString(1));
             friend = cursor.getString(2);
             try {
@@ -149,7 +149,7 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
 
     public void addToFeedDB(SoundByteFeedObject  feedObject){
         if(db != null){
-            //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
+            //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED | READ
             ContentValues values = new ContentValues();
             values.put(ID, feedObject.getId());
             values.put(IS_SENT, feedObject.getIsSent());

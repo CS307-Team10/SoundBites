@@ -2,10 +2,17 @@ package com.soundbytes.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.widget.LinearLayout;
+import android.widget.Scroller;
 
 import com.soundbytes.SoundByteConstants;
 
@@ -20,6 +27,11 @@ public class AudioTrackMeterView extends LinearLayout{
     private Paint paint;
     private int stepSize = 0;
     private int viewHeight = 0;
+    private boolean swipeDisabled = false;
+    private int currentFilter = 0;
+    private Scroller scroller = null;
+    private Paint textPaint;
+    protected float[] filterDists = {0f,0f};
 
     /**
      * Constructor
@@ -40,6 +52,14 @@ public class AudioTrackMeterView extends LinearLayout{
         init();
     }
 
+    public void disableSwipe(boolean disable){
+        this.swipeDisabled = disable;
+    }
+
+    public boolean isSwipeDisabled(){
+        return swipeDisabled;
+    }
+
     /**
      * Constructor
      * @param context the activity context
@@ -57,28 +77,73 @@ public class AudioTrackMeterView extends LinearLayout{
     private void init(){
         amplitudeList = new LinkedList<>();
         paint = new Paint();
+
+        textPaint = new Paint();
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextSize(60f);
+        textPaint.setAlpha(180);
+        textPaint.setColor(Color.WHITE);
+        textPaint.setFakeBoldText(true);
+        textPaint.setShadowLayer(20f, 0, 0, Color.argb(0, 0, 0, 100));
     }
 
+    public void invalidate(Scroller scroller, int currentFilter, float[] filterDists){
+        this.scroller = scroller;
+        this.currentFilter = currentFilter;
+        this.filterDists = filterDists;
+        invalidate();
+    }
 
     @Override
     /*
      * This method draws the wavy line on the AudioTrack view
      */
     public void onDraw(Canvas canvas){
-        //FYI it updates every 10ms
         super.onDraw(canvas);
-        if(amplitudeList.size() == 0)
-            return;
-        Iterator<Point> it = amplitudeList.iterator();
-        Point previousPoint = it.next();
-        Point currentPoint;
-        //while there are points
-        while(it.hasNext()){
-            currentPoint = it.next();
-            //draw line from previous point to current point
-            canvas.drawLine(previousPoint.x*stepSize, previousPoint.y,
-                    currentPoint.x*stepSize, currentPoint.y, paint);
+        if(amplitudeList.size() != 0) {
+            Iterator<Point> it = amplitudeList.iterator();
+            Point previousPoint = it.next();
+            Point currentPoint;
+            //while there are points
+            while (it.hasNext()) {
+                currentPoint = it.next();
+                //draw line from previous point to current point
+                canvas.drawLine(previousPoint.x * stepSize, previousPoint.y,
+                        currentPoint.x * stepSize, currentPoint.y, paint);
+            }
         }
+
+        if(scroller == null && filterDists[0] == 0f){
+            drawTextOffset(canvas, textPaint, SoundByteConstants.FILTER_NAME[currentFilter], 0, 0);
+//            canvas.drawText(SoundByteConstants.FILTER_NAME[currentFilter], 0, getHeight()/2, textPaint);
+        }else{
+            //draw outgoing filter
+            drawTextOffset(canvas, textPaint, SoundByteConstants.FILTER_NAME[currentFilter], filterDists[0], 0);
+            //draw incoming filter
+            if(filterDists[0] <= 0) {
+                drawTextOffset(canvas, textPaint, SoundByteConstants.FILTER_NAME[
+                                (currentFilter + 1) % SoundByteConstants.FILTER_NAME.length],
+                        filterDists[0] + getWidth(), 0);
+            }else {
+                drawTextOffset(canvas, textPaint, SoundByteConstants.FILTER_NAME[
+                        currentFilter == 0? currentFilter-1+SoundByteConstants.FILTER_NAME.length: currentFilter-1],
+                        filterDists[0] - getWidth(), 0);
+            }
+        }
+    }
+
+    /**
+     * Adapted from http://stackoverflow.com/a/32081250/2057884
+     */
+    protected void drawTextOffset(Canvas canvas, Paint paint, String text, float xOffset, float yOffset){
+        int cHeight = canvas.getClipBounds().height();
+        int cWidth = canvas.getClipBounds().width();
+        Rect r = new Rect();
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.getTextBounds(text, 0, text.length(), r);
+        float x = cWidth / 2f - r.width() / 2f - r.left;
+        float y = cHeight / 2f + r.height() / 2f - r.bottom;
+        canvas.drawText(text.toUpperCase(), x + xOffset, y + yOffset, paint);
     }
 
     @Override
@@ -86,7 +151,7 @@ public class AudioTrackMeterView extends LinearLayout{
      * THis method is called when the size of the screen changes for any reason
      */
     public void onSizeChanged (int w, int h, int oldw, int oldh){
-        super.onSizeChanged(w,h,oldw,oldh);
+        super.onSizeChanged(w, h, oldw, oldh);
         float timeInc = 0.01f; //As in updated every 10ms
         stepSize = (int)((w - getPaddingRight() - getPaddingLeft())/(SoundByteConstants.TIME_LIMIT/timeInc));
         viewHeight = h - getPaddingBottom() - getPaddingTop() - 8;//8 just cause

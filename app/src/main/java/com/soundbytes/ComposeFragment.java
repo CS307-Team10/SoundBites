@@ -72,10 +72,6 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     private void addTrackToLayout(AudioTrackView trackView){
         //Find the layout
         LinearLayout layout = (LinearLayout) getView().findViewById(R.id.track_layout);
-        //Find the empty TextView
-        TextView empty = (TextView)layout.findViewById(R.id.empty_text);
-        //Remove the empty TextView from layout
-        layout.removeView(empty);
         //Add the trackView to layout
         layout.addView(trackView);
         //Setup the long press stuff
@@ -163,17 +159,6 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         unregisterForContextMenu(track);
         //remove audioTrack from the layout
         layout.removeView(track);
-        //Check if the layout will be empty after removing the trackView
-        if(layout.getChildCount() == 0){
-            //Since the layout is empty, add the empty text
-            TextView empty = new TextView(getContext());
-            empty.setId(R.id.empty_text);
-            empty.setBackgroundColor(Color.parseColor("#dddddd"));
-            empty.setText(R.string.no_audio_text);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            empty.setLayoutParams(params);
-            layout.addView(empty);
-        }
         //enable the record button, since the number of tracks is definitely less than the limit right now
         recordButton.setEnabled(true);
         trackCount--;

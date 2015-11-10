@@ -160,7 +160,7 @@ public class RecordButton extends ImageButton {
     public boolean onTouchEvent(MotionEvent event){
         //call teh gesture detector and see if it consumed the touchEvent
         boolean result = mDetector.onTouchEvent(event);
-        //if the touch event wasn't consumed passs it on to the super class
+        //if the touch event wasn't consumed pass it on to the super class
         if(!result) {
             result = super.onTouchEvent(event);
         }
@@ -171,6 +171,7 @@ public class RecordButton extends ImageButton {
             isRecording = false;
             cleanUpHandlers();
             recordListener.onStopRecording();
+            getParent().requestDisallowInterceptTouchEvent(false);
         }
         return result;
     }
@@ -187,7 +188,6 @@ public class RecordButton extends ImageButton {
     }
 
    //Class that detects gestures
-
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDoubleTap (MotionEvent event){
@@ -199,6 +199,7 @@ public class RecordButton extends ImageButton {
         public void onLongPress (MotionEvent event){
             if(isEnabled()) {
                 Log.v("Gesture", "longPress");
+                getParent().requestDisallowInterceptTouchEvent(true);
                 recordListener.onStartRecording();
                 isRecording = true;
                 initializeHandlers();
