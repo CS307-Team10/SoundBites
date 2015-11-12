@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp">
+    <com.soundbytes.views.AudioTrackView
+        android:id="@+id/feed_trackview"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="00dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.soundbytes.views.AudioTrackView>
+</LinearLayout>

@@ -12,12 +12,8 @@ import com.soundbytes.SoundByteConstants;
 import com.soundbytes.SoundByteFeedObject;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Olumide on 11/4/2015.
@@ -25,7 +21,7 @@ import java.util.List;
 public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResponse{
     private static final String DB_NAME = "News_Feed";
     private static final String TABLE_NAME = "News_Feed";
-    private static final int VERSION = 2;
+    private static final int VERSION = 1;
 
     //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
     private static final String ID = "id";
@@ -38,35 +34,38 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
     private static final String SPEED = "playback_speed";
     private static final String READ = "read";
     private SQLiteDatabase db = null;
-    private Context context;
     private DBHandlerResponse dbHandlerResponse;
-    private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-    private Cursor cursor;
+    private static FeedDatabaseHandler feedDatabaseHandler = null;
 
     private final String SELECT_QUERY = "SELECT * FROM " + TABLE_NAME;
 
-    public FeedDatabaseHandler(Context context, DBHandlerResponse dbHandlerResponse){
+    private FeedDatabaseHandler(Context context, DBHandlerResponse dbHandlerResponse){
         //Although dbHandlerResponse snd context would always be the same object
         // The constructor is setup this way to prevent casting errors if used incorrectly
         super(context, DB_NAME, null, VERSION);
-        this.context = context;
         this.dbHandlerResponse = dbHandlerResponse;
         //Use Writable Db for both reading and writing. It's easier and simpler
-        AsyncGetWritableDB asyncGetWritableDB = new AsyncGetWritableDB(this);
+        AsyncGetWritableDB asyncGetWritableDB = new AsyncGetWritableDB(this, false);
         asyncGetWritableDB.delegate = this;
         asyncGetWritableDB.execute();
     }
 
-    public void processFinish(SQLiteDatabase db){
-        this.db = db;
-        cursor = db.rawQuery(SELECT_QUERY, null);
-        dbHandlerResponse.onDBReady();
-        Log.v("Db", "process finish");
+    public static synchronized FeedDatabaseHandler getInstance(Context context, DBHandlerResponse dbHandlerResponse){
+        if(feedDatabaseHandler == null) {
+            feedDatabaseHandler = new FeedDatabaseHandler(context.getApplicationContext(), dbHandlerResponse);
+        }else{
+            AsyncGetWritableDB asyncGetWritableDB = new FeedDatabaseHandler.AsyncGetWritableDB(null, true);
+            asyncGetWritableDB.delegate = null;
+            asyncGetWritableDB.dbHandlerResponse = dbHandlerResponse;
+            asyncGetWritableDB.execute();
+        }
+        return feedDatabaseHandler;
     }
 
-    public void cleanup(){
-        db.close();
+    public void processFinish(SQLiteDatabase db){
+        this.db = db;
+        dbHandlerResponse.onDBReady();
+        Log.v("Db", "process finish");
     }
 
     @Override
@@ -81,7 +80,6 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
                         TABLE_NAME, ID, IS_SENT, FRIEND, DATE, TIME, SOUND_PATH, FILTER, SPEED, READ);
         db.execSQL(CREATE_TABLE);
         Log.v("Db", "onCreate");
-        cursor = db.rawQuery(SELECT_QUERY, null);
     }
 
     @Override
@@ -96,27 +94,25 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         }
     }
 
-    private List<SoundByteFeedObject> getFeed(){
-        List<SoundByteFeedObject> feed = new ArrayList<SoundByteFeedObject>();
-        //Loop through and return the stuff
-        int count = getCount();
-        SoundByteFeedObject feedObject;
-        for(int i = 0; i < count; i++) {
-            feedObject = getFeedObject(i);
-            feed.add(feedObject);
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVer, int newVer){
+        int incVer = oldVer;
+        while(--incVer >= newVer){
+            switch(incVer){
+                case 1:
+                    db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+                    onCreate(db);
+            }
         }
-        return feed;
     }
 
     //This also includes Hidden items
     public int getCount() {
-//        String countQuery = "SELECT  * FROM " + TABLE_NAME;
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery(countQuery, null);
-//        int count = cursor.getCount();
-//        cursor.close();
-//        return count;
-        return 3;
+        Cursor cursor = db.rawQuery(SELECT_QUERY, null);
+        cursor.moveToFirst();
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
     }
 
     public SoundByteFeedObject getFeedObject(int id){
@@ -127,15 +123,16 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         String filter = null;
         float speed = 1;
         boolean sent = false;
+        Cursor cursor = db.rawQuery(SELECT_QUERY, null);
 
         if(cursor.moveToFirst()){
             cursor.moveToPosition(id);
             //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED | READ
-            sent = SoundByteConstants.SENT.equals(cursor.getString(1));
+            sent = Boolean.parseBoolean(cursor.getString(1));
             friend = cursor.getString(2);
             try {
-                date = dateFormat.parse(cursor.getString(3));
-                time = timeFormat.parse(cursor.getString(4));
+                date = SoundByteConstants.dateFormat.parse(cursor.getString(3));
+                time = SoundByteConstants.timeFormat.parse(cursor.getString(4));
             }
             catch(ParseException p){
                 //Not sure what to do here
@@ -144,6 +141,7 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
             filter = cursor.getString(6);
             speed = cursor.getFloat(7);
         }
+        cursor.close();
         return new SoundByteFeedObject(id, sent, friend, date, time, /*new File(soundPath)*/null, filter, speed);
     }
 
@@ -155,8 +153,8 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
             values.put(IS_SENT, feedObject.getIsSent());
             values.put(FRIEND, feedObject.getFriend());
             values.put(SOUND_PATH, feedObject.getAudioPath());
-            values.put(DATE, dateFormat.format(feedObject.getDate()));
-            values.put(TIME, timeFormat.format(feedObject.getTime()));
+            values.put(DATE, SoundByteConstants.dateFormat.format(feedObject.getDate()));
+            values.put(TIME, SoundByteConstants.timeFormat.format(feedObject.getTime()));
             values.put(SOUND_PATH, feedObject.getAudioPath());
             values.put(FILTER, feedObject.getFilter());
             values.put(SPEED, feedObject.getPlaybackSpeed());
@@ -164,22 +162,31 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         }
     }
 
-    private class AsyncGetWritableDB extends AsyncTask<Object, Void, SQLiteDatabase> {
+    public static class AsyncGetWritableDB extends AsyncTask<Object, Void, SQLiteDatabase> {
         private FeedDatabaseHandler dbHandler;
         public DBAsyncResponse delegate = null;
+        public DBHandlerResponse dbHandlerResponse = null;
+        private boolean isWorkAround;
 
-        public AsyncGetWritableDB(FeedDatabaseHandler dbh){
+        public AsyncGetWritableDB(FeedDatabaseHandler dbh, boolean isWorkAround){
             dbHandler = dbh;
+            this.isWorkAround = isWorkAround;
         }
         @Override
         protected SQLiteDatabase doInBackground(Object ... objects) {
             Log.e("BD", "BDBD");
-            return dbHandler.getReadableDatabase();
+            if(!isWorkAround)
+                return dbHandler.getReadableDatabase();
+            else
+                return null;
         }
 
         @Override
         protected void onPostExecute(SQLiteDatabase db){
-            delegate.processFinish(db);
+            if(delegate != null)
+                delegate.processFinish(db);
+            else if(dbHandlerResponse != null)
+                dbHandlerResponse.onDBReady();
         }
     }
 }

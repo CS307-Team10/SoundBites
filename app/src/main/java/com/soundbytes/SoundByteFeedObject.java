@@ -49,6 +49,8 @@ public class SoundByteFeedObject {
     }
 
     public String getAudioPath(){
+        if(audioPath == null)
+            return "";
         return audioPath.getPath();
     }
 

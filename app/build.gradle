@@ -30,4 +30,5 @@ dependencies {
     compile 'com.mcxiaoke.viewpagerindicator:library:2.4.1'
     compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile "com.google.android.gms:play-services:8.1.0"
+    compile 'com.github.traex.expandablelayout:library:1.3'
 }

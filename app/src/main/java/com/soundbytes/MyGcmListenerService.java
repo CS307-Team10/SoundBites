@@ -11,28 +11,66 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.soundbytes.db.DBHandlerResponse;
+import com.soundbytes.db.FeedDatabaseHandler;
+import com.soundbytes.views.SoundByteFeedView;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Created by Olumide on 11/1/2015.
  */
-public class MyGcmListenerService extends GcmListenerService {
+public class MyGcmListenerService extends GcmListenerService implements DBHandlerResponse{
+    private FeedDatabaseHandler dbHandler;
     private static final String TAG = "MyGcmListenerService";
+    private boolean dbHandlerReady = false;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
-        //TODO
-        sendNotification(message);
+        int id = dbHandler.getCount();
+        boolean sent = Boolean.parseBoolean(data.getString("sent"));
+        String friend = data.getString("friend");
+        Date date, time;
+        try {
+            date = SoundByteConstants.dateFormat.parse(data.getString("date"));
+        }catch (ParseException e){
+            date = new Date();
+        }
+        try {
+            time = SoundByteConstants.dateFormat.parse(data.getString("time"));
+        }catch (ParseException e){
+            time = new Date();
+        }
+        String filter =  data.getString("filter");
+        float speed = Float.parseFloat(data.getString("speed"));
+        File audioPath = null;
+
+        SoundByteFeedObject feedObject = new SoundByteFeedObject(id, sent, friend, date, time, audioPath, filter, speed);
+        sendNotification(feedObject);
+        if(dbHandlerReady && dbHandler != null) {
+            dbHandler.addToFeedDB(feedObject);
+        }else{
+            dbHandler = FeedDatabaseHandler.getInstance(getApplicationContext(), this);
+        }
+        Log.v("db", "count is: "+dbHandler.getCount());
+        dbHandler.getFeedObject(dbHandler.getCount() - 1);
     }
 
-    /**
-     * Create and show a simple notification containing the received GCM message.
-     *
-     * @param message GCM message received.
-     */
-    private void sendNotification(String message) {
+    public void onDBReady(){
+        dbHandlerReady = true;
+    }
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        dbHandler = FeedDatabaseHandler.getInstance(getApplicationContext(), this);
+    }
+
+    private void sendNotification(SoundByteFeedObject feedObject) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -40,9 +78,9 @@ public class MyGcmListenerService extends GcmListenerService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
-                .setContentTitle("GCM Message")
-                .setContentText(message)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("New SoundByte")
+                .setContentText(String.format("%s sent you a SoundByte", feedObject.getFriend()))
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

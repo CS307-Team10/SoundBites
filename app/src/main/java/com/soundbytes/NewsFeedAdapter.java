@@ -56,7 +56,7 @@ public class NewsFeedAdapter extends BaseAdapter{
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        SoundByteFeedObject feedObject = dbHandler.getFeedObject(position);
+        SoundByteFeedObject feedObject = dbHandler.getFeedObject(getCount() -1 - position);
         SoundByteFeedView feedView;
         if ((convertView != null) && convertView instanceof SoundByteFeedView){
             feedView = (SoundByteFeedView)convertView;
@@ -65,8 +65,9 @@ public class NewsFeedAdapter extends BaseAdapter{
         }
         feedView.populate(feedObject, feedFragment);
         if(feedFragment.isTrackCurrentlyPlaying(feedObject.getId())){
-            feedView.expand();
             feedView.setPauseButton();
+        }else{
+            feedView.resetPlayButton();
         }
         return feedView;
     }

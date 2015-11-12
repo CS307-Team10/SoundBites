@@ -4,10 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
+import com.andexert.expandablelayout.library.ExpandableLayoutItem;
 import com.soundbytes.AudioTrackController;
 import com.soundbytes.R;
 import com.soundbytes.SoundByteFeedObject;
@@ -15,7 +14,7 @@ import com.soundbytes.SoundByteFeedObject;
 /**
  * Created by Olumide on 11/8/2015.
  */
-public class SoundByteFeedView extends RelativeLayout {
+public class SoundByteFeedView extends ExpandableLayoutItem {
     private AudioTrackView trackView;
     private boolean isExpanded = false;
 
@@ -38,21 +37,19 @@ public class SoundByteFeedView extends RelativeLayout {
     private void init(){
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.soundbyte_feed_view, this);
-        trackView = (AudioTrackView)view.findViewById(R.id.feed_trackview);
+        trackView = (AudioTrackView)findViewById(R.id.feed_trackview);
     }
 
     public void populate(SoundByteFeedObject soundByteFeedObject, AudioTrackController controller){
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SoundByteFeedView.this.expand();
-            }
-        });
         trackView.registerController(controller, soundByteFeedObject.getId());
     }
 
     public void setPauseButton(){
         trackView.setPauseButton();
+    }
+
+    public void resetPlayButton(){
+        trackView.resetPlayButton();
     }
 
     public void collapse(){

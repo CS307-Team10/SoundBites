@@ -1,41 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:animateLayoutChanges="true"
+<com.andexert.expandablelayout.library.ExpandableLayoutItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:expandable="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/expandableLayout"
     android:layout_width="match_parent"
-    android:layout_height="50dp">
-    <com.soundbytes.views.AudioTrackView
-        android:visibility="gone"
-        android:id="@+id/feed_trackview"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="00dp"
-        android:layout_width="match_parent"
-        android:layout_height="45dp">
-    </com.soundbytes.views.AudioTrackView>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/info_portion"
-        android:background="#eeeeee"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-        <View
-            android:id="@+id/open_indicator"
-            android:layout_width="15dp"
-            android:layout_height="match_parent"/>
-        <ImageView
-            android:layout_gravity="center_vertical"
-            android:background="#00ff00"
-            android:id="@+id/feed_type_image"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:scaleType="centerInside" />
-        <TextView
-            android:layout_marginLeft="12dp"
-            android:textSize="16sp"
-            android:singleLine="true"
-            android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="JoeHates"
-            android:id="@+id/friend_text" />
-    </LinearLayout>
-</RelativeLayout>
+    android:layout_height="wrap_content"
+    expandable:el_headerLayout="@layout/soundbyte_feed_view_header"
+    expandable:el_contentLayout="@layout/soundbyte_feed_view_content"/>

@@ -1,13 +1,14 @@
 package com.soundbytes;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.andexert.expandablelayout.library.ExpandableLayoutListView;
 import com.soundbytes.db.DBHandlerResponse;
 import com.soundbytes.db.FeedDatabaseHandler;
 import com.soundbytes.views.AudioTrackView;
@@ -15,21 +16,23 @@ import com.soundbytes.views.AudioTrackView;
 /**
  * Created by Olumide on 11/4/2015.
  */
-public class NewsFeedFragment extends TitledFragment implements DBHandlerResponse, AudioTrackController {
+public class NewsFeedFragment extends TitledFragment implements DBHandlerResponse, AudioTrackController, SwipeRefreshLayout.OnRefreshListener{
     private String title;
     private View viewLayout;
-    private ListView listView;
+    private ExpandableLayoutListView expListView;
     private NewsFeedAdapter adapter;
     private FeedDatabaseHandler dbHandler;
     private int currentlyPlaying = -1;
+    private SwipeRefreshLayout refresher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Inflate the fragment
         viewLayout = inflater.inflate(R.layout.fragment_newsfeed, container, false);
-//        linearLayout = (ViewGroup)viewLayout.findViewById(R.id.linear_layout);
-        listView = (ListView)viewLayout.findViewById(R.id.feed_list_view);
-        dbHandler = new FeedDatabaseHandler(getContext(), this);
+        expListView = (ExpandableLayoutListView)viewLayout.findViewById(R.id.feed_exp_list_view);
+        refresher = (SwipeRefreshLayout)viewLayout.findViewById(R.id.swipe_refresh);
+        refresher.setOnRefreshListener(this);
+        dbHandler = FeedDatabaseHandler.getInstance(getContext(), this);
         return viewLayout;
     }
 
@@ -91,7 +94,18 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
 
     public void onDBReady(){
         adapter = new NewsFeedAdapter(getContext(), dbHandler, this);
-        listView.setAdapter(adapter);
-        listView.invalidate();
+        expListView.setAdapter(adapter);
+        expListView.invalidate();
+    }
+
+    public void onRefresh(){
+        Log.v("swipe", "onRefresh");
+        if(expListView.getChildCount() < adapter.getCount()){
+            refresher.setRefreshing(true);
+            adapter.notifyDataSetChanged();
+            refresher.setRefreshing(false);
+        }else{
+            refresher.setRefreshing(false);
+        }
     }
 }
