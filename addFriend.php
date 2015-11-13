@@ -21,15 +21,30 @@
     }
     
     echo json_encode($user);
-
-    $statement1 = "INSERT INTO `$currentUser` (friendName)
-    VALUES('$username')";
-
-    if (mysqli_query($con, $statement1)) {
-        echo "New record created successfully";
-    } else {
-        echo "Error: " . $statement1 . "<br>" . mysqli_error($con);
+    
+    $query = "SELECT friendName FROM `$currentUser` WHERE friendName = '$username'";
+    $result = mysqli_query($con, $query);
+    if (!$result) { die(mysqli_error($con)); }    
+    if(mysqli_num_rows($result) > 0){
+	   echo "Record already exists!";
+    } else {   
+	    $statement1 = "INSERT INTO `$currentUser` (friendName)
+	    VALUES('$username')";
+	
+	    if (mysqli_query($con, $statement1)) {
+	        echo "New record created successfully";
+	    } else {
+	        echo "Error: " . $statement1 . "<br>" . mysqli_error($con);
+	    }
+	    
+	    $statement2 = "INSERT INTO `$username` (friendName)
+	    VALUES('$currentUser')";
+	
+	    if (mysqli_query($con, $statement2)) {
+	        echo "New record created successfully";
+	    } else {
+	        echo "Error: " . $statement2 . "<br>" . mysqli_error($con);
+	    }
     }
-
     mysqli_close($con);
 ?>

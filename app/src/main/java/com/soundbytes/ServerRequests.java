@@ -1,6 +1,5 @@
 package com.soundbytes;
 
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -173,6 +172,7 @@ public class ServerRequests {
                     int age = jObject.getInt("age");
                     returnedUser = new User(name,age,user.username, user.password);
                 }
+                System.out.println("result: " + result);
             }catch(Exception e){
                 e.printStackTrace();
             }

@@ -8,7 +8,7 @@
     $speedUp = $_POST["speedUp"];
     $slowDown = $_POST["slowDown"];
 
-    $statement = "UPDATE $userName SET fileName = '$userName$friendName.3gp' where friendName = '$friendName'";
+    $statement = "UPDATE $friendName SET fileName = '$userName$friendName.3gp' where friendName = '$userName'";
 
     if (mysqli_query($con, $statement)) {
         echo "New record created successfully";
