@@ -1,10 +1,14 @@
 package com.soundbytes.views;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.andexert.expandablelayout.library.ExpandableLayoutItem;
 import com.soundbytes.AudioTrackController;
@@ -16,7 +20,10 @@ import com.soundbytes.SoundByteFeedObject;
  */
 public class SoundByteFeedView extends ExpandableLayoutItem {
     private AudioTrackView trackView;
-    private boolean isExpanded = false;
+    private TextView date;
+    private TextView friend;
+    private ProgressBar spinner;
+    private ImageView imageView;
 
     public SoundByteFeedView(Context c){
         super(c);
@@ -37,11 +44,31 @@ public class SoundByteFeedView extends ExpandableLayoutItem {
     private void init(){
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.soundbyte_feed_view, this);
-        trackView = (AudioTrackView)findViewById(R.id.feed_trackview);
+        trackView = (AudioTrackView)view.findViewById(R.id.feed_trackview);
+        if(trackView == null)
+            Log.v("FeedView", "trackview is null");
+        friend = (TextView)view.findViewById(R.id.friend_text);
+        date = (TextView)view.findViewById(R.id.date_text);
+        imageView = (ImageView)view.findViewById(R.id.feed_type_image);
+        spinner = (ProgressBar)view.findViewById(R.id.loading_progress_bar);
     }
 
     public void populate(SoundByteFeedObject soundByteFeedObject, AudioTrackController controller){
         trackView.registerController(controller, soundByteFeedObject.getId());
+        //Set Image type
+        imageView.setVisibility(VISIBLE);
+        if(soundByteFeedObject.getIsSent())
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_send_black_18dp));
+        else if(soundByteFeedObject.hasBeenOpened())
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.opened));
+        else
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.unopened));
+        //Set friend
+        friend.setText(soundByteFeedObject.getFriend());
+        //set date
+        date.setText(DateUtils.getRelativeDateTimeString (getContext(), soundByteFeedObject.getDate().getTime(),
+                DateUtils.MINUTE_IN_MILLIS, DateUtils.DAY_IN_MILLIS*30, DateUtils.FORMAT_ABBREV_RELATIVE));
+        spinner.setVisibility(INVISIBLE);
     }
 
     public void setPauseButton(){
@@ -50,29 +77,5 @@ public class SoundByteFeedView extends ExpandableLayoutItem {
 
     public void resetPlayButton(){
         trackView.resetPlayButton();
-    }
-
-    public void collapse(){
-        if(isExpanded) {
-            new RelativeLayout.LayoutParams(trackView.getWidth(), trackView.getHeight()).setMargins(0, 0, 0, trackView.getHeight());
-            RelativeLayout.LayoutParams rl2 = new RelativeLayout.LayoutParams(trackView.getWidth(), trackView.getHeight());
-            rl2.setMargins(0, 0, 0, -trackView.getHeight());
-            isExpanded = false;
-            invalidate();
-        }
-    }
-
-    public void expand() {
-        if (!isExpanded) {
-//        AbsListView.LayoutParams rl2 = new AbsListView.LayoutParams(getWidth(),trackView.getHeight()+getHeight());
-//        setLayoutParams(rl2);
-//        Toast.makeText(context, "expand", Toast.LENGTH_LONG).show();
-//        invalidate();
-//        RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(trackView.getWidth(),trackView.getHeight());
-////        rl.setMargins(trackView.getHeight(), 0, 0, 0);
-//        trackView.setLayoutParams(rl);
-//        trackView.invalidate();
-            isExpanded = true;
-        }
     }
 }

@@ -30,29 +30,24 @@ public class MyGcmListenerService extends GcmListenerService implements DBHandle
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
+        String audio_id = data.getString("audioID");
         int id = dbHandler.getCount();
         boolean sent = Boolean.parseBoolean(data.getString("sent"));
         String friend = data.getString("friend");
         Date date, time;
         try {
-            date = SoundByteConstants.dateFormat.parse(data.getString("date"));
-        }catch (ParseException e){
+            date = new Date(Long.parseLong(data.getString("date")));
+        }catch (NullPointerException e){
             date = new Date();
-        }
-        try {
-            time = SoundByteConstants.dateFormat.parse(data.getString("time"));
-        }catch (ParseException e){
-            time = new Date();
         }
         String filter =  data.getString("filter");
         float speed = Float.parseFloat(data.getString("speed"));
-        File audioPath = null;
 
-        SoundByteFeedObject feedObject = new SoundByteFeedObject(id, sent, friend, date, time, audioPath, filter, speed);
+        SoundByteFeedObject feedObject = new SoundByteFeedObject(id, sent, friend, date, null, filter, speed, false, audio_id);
         sendNotification(feedObject);
         if(dbHandlerReady && dbHandler != null) {
             dbHandler.addToFeedDB(feedObject);
+            broadcastIntent();
         }else{
             dbHandler = FeedDatabaseHandler.getInstance(getApplicationContext(), this);
         }
@@ -62,6 +57,12 @@ public class MyGcmListenerService extends GcmListenerService implements DBHandle
 
     public void onDBReady(){
         dbHandlerReady = true;
+    }
+
+    private void broadcastIntent(){
+        Intent intent = new Intent();
+        intent.setAction(SoundByteConstants.dbUpdateBroadcast);
+        sendBroadcast(intent);
     }
 
     @Override

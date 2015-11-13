@@ -44,6 +44,9 @@ public class ServerRequests {
     public void storeUserKeyInBackground(User user, String key, GetUserCallBack callBack){
         new StoreUserGCMKey(user, key, callBack).execute();
     }
+    public void fetchAudioFileInBackground(User user, String audioID, OnAudioDownloadCallback callBack){
+        new FetchAudioFile(user, audioID, callBack).execute();
+    }
 
     public class StoreUserDataAsyncTask extends AsyncTask<Void, Void, Void>{
         User user;
@@ -171,6 +174,55 @@ public class ServerRequests {
         @Override
         protected void onPostExecute(Void aVoid) {
             userCallBack.done(null);
+            super.onPostExecute(aVoid);
+        }
+    }
+
+    public class FetchAudioFile extends AsyncTask<Void, Void, Void> {
+        OnAudioDownloadCallback audioCallBack;
+        User user;
+        String audio_ID;
+        String b64;
+        String SERVER_ADDRESS = "http://olu.mide.co/Random/CS307/";
+
+        public FetchAudioFile(User user, String audio_ID, OnAudioDownloadCallback audioCallBack) {
+            this.user = user;
+            this.audio_ID = audio_ID;
+            this.audioCallBack = audioCallBack;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<NameValuePair> datatoSend = new ArrayList<>();
+            datatoSend.add(new BasicNameValuePair("username", user.username));
+            datatoSend.add(new BasicNameValuePair("audioID", audio_ID));
+
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpPost post = new HttpPost(SERVER_ADDRESS + "GetAudio.php");
+            try {
+                post.setEntity(new UrlEncodedFormEntity(datatoSend));
+                HttpResponse httpResponse = client.execute(post);
+                HttpEntity entity = httpResponse.getEntity();
+                String result = EntityUtils.toString(entity);
+                JSONObject jObject = new JSONObject(result);
+                if (jObject.length() == 0) {
+                    b64 = null;
+                } else {
+                    b64 = jObject.getString("b64");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            audioCallBack.onAudioDownloaded(b64);
             super.onPostExecute(aVoid);
         }
     }

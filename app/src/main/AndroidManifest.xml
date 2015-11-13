@@ -24,6 +24,13 @@
                 <category android:name="com.soundbytes" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".NewsFeedFragment$DatabaseUpdatedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.soundbytes.DB_UPDATED" />
+            </intent-filter>
+        </receiver>
         <service
             android:name="com.soundbytes.MyGcmListenerService"
             android:exported="false" >
@@ -67,7 +74,4 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-
-
 </manifest>

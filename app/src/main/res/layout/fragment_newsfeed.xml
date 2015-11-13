@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.andexert.expandablelayout.library.ExpandableLayoutListView
-        android:animateLayoutChanges="true"
         android:id="@+id/feed_exp_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

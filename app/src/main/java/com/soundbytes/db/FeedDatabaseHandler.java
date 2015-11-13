@@ -22,8 +22,6 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
     private static final String DB_NAME = "News_Feed";
     private static final String TABLE_NAME = "News_Feed";
     private static final int VERSION = 1;
-
-    //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
     private static final String ID = "id";
     private static final String DATE = "date";
     private static final String TIME = "time";
@@ -33,6 +31,7 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
     private static final String FILTER = "filter";
     private static final String SPEED = "playback_speed";
     private static final String READ = "read";
+    private static final String AUDIO_ID = "audio_id"; //used to retrieve file from server
     private SQLiteDatabase db = null;
     private DBHandlerResponse dbHandlerResponse;
     private static FeedDatabaseHandler feedDatabaseHandler = null;
@@ -74,10 +73,10 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         Log.e("Db", "onCreate");
         this.db = db;//Just in case
         //TABLE FORMAT
-        //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED | READ
+        //ID | SENT? | TO/FROM| DATE | TIME |FILEPATH | FILTER | SPEED | READ | UNIQUE FILE ID
         String CREATE_TABLE =
-                String.format("CREATE TABLE IF NOT EXISTS %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s REAL, %s TEXT)",
-                        TABLE_NAME, ID, IS_SENT, FRIEND, DATE, TIME, SOUND_PATH, FILTER, SPEED, READ);
+                String.format("CREATE TABLE IF NOT EXISTS %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s REAL, %s TEXT, %s TEXT)",
+                        TABLE_NAME, ID, IS_SENT, FRIEND, DATE, TIME, SOUND_PATH, FILTER, SPEED, READ, AUDIO_ID);
         db.execSQL(CREATE_TABLE);
         Log.v("Db", "onCreate");
     }
@@ -115,50 +114,88 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         return count;
     }
 
+    public void markAsRead(int id){
+        SoundByteFeedObject feedObject = getFeedObject(id);
+        feedObject.markAsRead();
+        updateDBFeed(feedObject);
+    }
+
+    public void updateFilePath(int id, File soundfile){
+        SoundByteFeedObject feedObject = getFeedObject(id);
+        feedObject.setFilePath(soundfile);
+        updateDBFeed(feedObject);
+    }
+
     public SoundByteFeedObject getFeedObject(int id){
-        String soundPath = null;
+        File soundFile = null;
         Date date = null;
-        Date time = null;
         String friend = null;
         String filter = null;
         float speed = 1;
         boolean sent = false;
+        boolean read = false;
         Cursor cursor = db.rawQuery(SELECT_QUERY, null);
+        String audio_id = null;
 
         if(cursor.moveToFirst()){
             cursor.moveToPosition(id);
-            //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED | READ
-            sent = Boolean.parseBoolean(cursor.getString(1));
+            //ID | SENT? | TO/FROM| DATE | TIME |FILEPATH | FILTER | SPEED | READ | UNIQUE FILE ID
+            sent = "1".equals(cursor.getString(1));
+            read = "1".equals(cursor.getString(8));
             friend = cursor.getString(2);
             try {
                 date = SoundByteConstants.dateFormat.parse(cursor.getString(3));
-                time = SoundByteConstants.timeFormat.parse(cursor.getString(4));
             }
             catch(ParseException p){
                 //Not sure what to do here
             }
-            soundPath = cursor.getString(5);
+            String soundPath = cursor.getString(5);
+            try{
+                soundFile = new File(soundPath);
+            }catch (Exception e){
+                //Do nothing
+            }
             filter = cursor.getString(6);
             speed = cursor.getFloat(7);
+            audio_id = cursor.getString(9);
         }
         cursor.close();
-        return new SoundByteFeedObject(id, sent, friend, date, time, /*new File(soundPath)*/null, filter, speed);
+        return new SoundByteFeedObject(id, sent, friend, date, soundFile, filter, speed, read, audio_id);
     }
 
     public void addToFeedDB(SoundByteFeedObject  feedObject){
         if(db != null){
-            //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED | READ
             ContentValues values = new ContentValues();
             values.put(ID, feedObject.getId());
             values.put(IS_SENT, feedObject.getIsSent());
             values.put(FRIEND, feedObject.getFriend());
             values.put(SOUND_PATH, feedObject.getAudioPath());
+            values.put(AUDIO_ID, feedObject.getAudioID());
             values.put(DATE, SoundByteConstants.dateFormat.format(feedObject.getDate()));
-            values.put(TIME, SoundByteConstants.timeFormat.format(feedObject.getTime()));
+            values.put(TIME, SoundByteConstants.dateFormat.format(feedObject.getDate()));
             values.put(SOUND_PATH, feedObject.getAudioPath());
             values.put(FILTER, feedObject.getFilter());
             values.put(SPEED, feedObject.getPlaybackSpeed());
+            values.put(READ, feedObject.hasBeenOpened());
             db.insert(TABLE_NAME, null, values);
+        }
+    }
+
+    private void updateDBFeed(SoundByteFeedObject  feedObject){
+        if(db != null){
+            ContentValues values = new ContentValues();
+            values.put(ID, feedObject.getId());
+            values.put(IS_SENT, feedObject.getIsSent());
+            values.put(FRIEND, feedObject.getFriend());
+            values.put(AUDIO_ID, feedObject.getAudioID());
+            values.put(SOUND_PATH, feedObject.getAudioPath());
+            values.put(DATE, SoundByteConstants.dateFormat.format(feedObject.getDate()));
+            values.put(TIME, SoundByteConstants.dateFormat.format(feedObject.getDate()));
+            values.put(SOUND_PATH, feedObject.getAudioPath());
+            values.put(FILTER, feedObject.getFilter());
+            values.put(SPEED, feedObject.getPlaybackSpeed());
+            values.put(READ, feedObject.hasBeenOpened());
+            db.replace(TABLE_NAME, null, values);
         }
     }
 

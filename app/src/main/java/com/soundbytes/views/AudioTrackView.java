@@ -129,7 +129,9 @@ public class AudioTrackView extends RelativeLayout {
     }
 
     public void autoUpdateRecordPreview(File soundFile) {
-
+        if(!soundFile.exists())
+            throw new IllegalArgumentException(String.format("File %s doesn't exist",
+                    soundFile.getAbsolutePath()));
     }
 
     private boolean isPlayButton(){

@@ -13,8 +13,8 @@ public class SoundByteConstants {
     public static final String SENT = "SENT";
     public static final String RECEIVED = "RECEIVED";
     public static final String PACKAGE_NAME = "com.soundbytes";
-    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    public static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+    public static final String dbUpdateBroadcast = PACKAGE_NAME+".DB_UPDATED";
 
     //the empty string is a placeholder for none
     public static final String[] FILTER_NAME = {"", "HIGH PITCH", "LOW PITCH", "HIGH FREQ", "LOW FREQ"};

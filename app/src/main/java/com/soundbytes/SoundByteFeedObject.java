@@ -11,21 +11,23 @@ public class SoundByteFeedObject {
     private boolean sent;
     private String friend;
     private Date date;
-    private Date time;
     private File audioPath;
     private String filter;
     private float speed;
+    private boolean opened;
+    private String audio_id;
 
     //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
-    public SoundByteFeedObject(int id, boolean sent, String friend, Date date, Date time, File audioPath, String filter, float speed){
+    public SoundByteFeedObject(int id, boolean sent, String friend, Date date, File audioPath, String filter, float speed, boolean opened, String audio_id){
         this.id = id;
         this.sent = sent;
         this.friend = friend;
         this.date = date;
-        this.time = time;
         this.audioPath = audioPath;
         this.filter = filter;
         this.speed = speed;
+        this.opened = opened;
+        this.audio_id = audio_id;
     }
 
     public int getId(){
@@ -36,6 +38,22 @@ public class SoundByteFeedObject {
         return sent;
     }
 
+    public void setFilePath(File file){
+        audioPath = file;
+    }
+
+    public String getAudioID(){
+        return audio_id;
+    }
+
+    public boolean hasBeenOpened(){
+        return opened;
+    }
+
+    public void markAsRead(){
+        opened = true;
+    }
+
     public String getFriend(){
         return friend;
     }
@@ -44,13 +62,9 @@ public class SoundByteFeedObject {
         return date;
     }
 
-    public Date getTime(){
-        return time;
-    }
-
     public String getAudioPath(){
         if(audioPath == null)
-            return "";
+            return null;
         return audioPath.getPath();
     }
 
