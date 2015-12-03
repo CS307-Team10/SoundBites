@@ -33,7 +33,7 @@
                 android:id="@+id/empty_text"
                 android:background="#dddddd"
                 android:layout_width="match_parent"
-                android:text="No recordings create one!"
+                android:text="@string/no_audio_text"
                 android:layout_height="50dp" />
         </LinearLayout>
         <RelativeLayout android:layout_width="match_parent"

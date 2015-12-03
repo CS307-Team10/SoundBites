@@ -1,11 +1,13 @@
 package com.soundbytes;
 
+import android.graphics.Color;
 import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,6 +26,9 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     private MediaPlayer mPlayer = null;
 
     private static String mFileName = null;
+
+    private AudioTrackView selectedTrack;
+    private int trackCount = 0;
 
 
     @Override
@@ -112,6 +117,20 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.track_delete:
+                selectedTrack.delete();
+                selectedTrack = null;
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
     public void onStopRecording(){
 
     }
@@ -127,12 +146,37 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     @Override
-    public void deleteTrack(int trackId){
+    public void pauseAllAudio()
+    {
 
     }
 
     @Override
-    public void applyFilter(int trackId){
+    public void deleteTrack(AudioTrackView track, int trackId)
+    {
+        LinearLayout layout = (LinearLayout) getView().findViewById(R.id.track_layout);
+        //unregister the long press stuff
+        unregisterForContextMenu(track);
+        //remove audioTrack from the layout
+        layout.removeView(track);
+        //Check if the layout will be empty after removing the trackView
+        if(layout.getChildCount() == 0){
+            //Since the layout is empty, add the empty text
+            TextView empty = new TextView(getContext());
+            empty.setId(R.id.empty_text);
+            empty.setBackgroundColor(Color.parseColor("#dddddd"));
+            empty.setText(R.string.no_audio_text);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            empty.setLayoutParams(params);
+            layout.addView(empty);
+        }
+        //enable the record button, since the number of tracks is definitely less than the limit right now
+        r.setEnabled(true);
+        trackCount--;
+    }
+
+    @Override
+    public void applyFilter(int trackId, int filterIndex){
 
     }
 
