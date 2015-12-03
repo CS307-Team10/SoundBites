@@ -119,51 +119,6 @@
                 android:layout_height="90dp"
                 android:layout_centerInParent="true" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SpdUp"
-                android:id="@+id/filter_1"
-                android:layout_below="@+id/send_button"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignBottom="@+id/view"
-                android:layout_toStartOf="@+id/filter_2"
-                android:layout_toLeftOf="@+id/filter_2" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Slwd"
-                android:id="@+id/filter_2"
-                android:layout_alignTop="@+id/view"
-                android:layout_alignLeft="@+id/add_layout"
-                android:layout_alignStart="@+id/add_layout"
-                android:layout_toStartOf="@+id/send_button"
-                android:layout_alignBottom="@+id/view"
-                android:layout_toLeftOf="@+id/send_button" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lowfi"
-                android:id="@+id/filter_4"
-                android:layout_below="@+id/send_button"
-                android:layout_alignBottom="@+id/filter_2"
-                android:layout_alignLeft="@+id/imageButton"
-                android:layout_alignStart="@+id/imageButton" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/filter_3"
-                android:layout_alignLeft="@+id/send_button"
-                android:layout_alignStart="@+id/send_button"
-                android:layout_below="@+id/send_button"
-                android:layout_alignBottom="@+id/filter_2"
-                android:layout_alignRight="@+id/mic_button"
-                android:layout_alignEnd="@+id/mic_button"
-                android:text="Hifi" />
         </RelativeLayout>
     </RelativeLayout>
 </ScrollView>

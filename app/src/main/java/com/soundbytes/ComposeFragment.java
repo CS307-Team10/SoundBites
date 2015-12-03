@@ -65,40 +65,6 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         p.SetOutFileName(mFileName);
         p.SetMediaPlayer(mPlayer);
 
-        Button f1 = (Button) view.findViewById(R.id.filter_1);
-        Button f2 = (Button) view.findViewById(R.id.filter_2);
-        Button f3 = (Button) view.findViewById(R.id.filter_3);
-        Button f4 = (Button) view.findViewById(R.id.filter_4);
-
-        final FilterManager fm = new FilterManager(mFileName,getContext());
-
-        f1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.Speedup();
-            }
-        });
-
-        f2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.Slowdown();
-            }
-        });
-
-        f3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.HighPitch();
-            }
-        });
-
-        f4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fm.LowPitch();
-            }
-        });
 
 
         return view;
