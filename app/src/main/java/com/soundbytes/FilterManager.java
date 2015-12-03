@@ -26,6 +26,21 @@ public class FilterManager
         c = ctx;
     }
 
+    public void Regular()
+    {
+        final float playbackSpeed = 1.0f;
+        SoundPool sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
+        final int soundId = sp.load(audioName, 1);
+        AudioManager mgr = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
+        final float volume = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        sp.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
+            }
+        });
+    }
+
     public void Speedup()
     {
         final float playbackSpeed = 2.0f;

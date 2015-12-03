@@ -17,5 +17,6 @@ public class SoundByteConstants {
     public static final String dbUpdateBroadcast = PACKAGE_NAME+".DB_UPDATED";
 
     //the empty string is a placeholder for none
+
     public static final String[] FILTER_NAME = {"", "HIGH PITCH", "LOW PITCH", "SPEED UP", "SLOW DOWN"};
 }

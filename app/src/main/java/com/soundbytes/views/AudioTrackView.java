@@ -1,3 +1,4 @@
+
 package com.soundbytes.views;
 
 import android.content.Context;

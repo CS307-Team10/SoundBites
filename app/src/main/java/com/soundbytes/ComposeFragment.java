@@ -1,12 +1,18 @@
 package com.soundbytes;
 
-
-import android.os.Bundle;
-import android.graphics.Color;
 import android.view.ContextMenu;
 
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
+
+import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.os.Bundle;
+import android.os.Debug;
+import android.os.Environment;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.soundbytes.views.AudioTrackView;
+
+import com.soundbytes.views.PlayButton;
 import com.soundbytes.views.RecordButton;
 
 /**
@@ -22,9 +30,19 @@ import com.soundbytes.views.RecordButton;
  */
 public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
     private String title;
+
     private AudioTrackView selectedTrack;
-    private RecordButton recordButton;
     private int trackCount = 0;
+
+    private RecordButton r;
+    private MediaRecorder mRecorder = null;
+
+    private PlayButton p = null;
+    private MediaPlayer mPlayer = null;
+
+    private static String mFileName = null;
+
+    private int currentSelectedFilterId = 0;
 
     @Override
     /**
@@ -42,9 +60,21 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Inflate the fragment
         View view = inflater.inflate(R.layout.fragment_compose_audio, container, false);
-      //Find the record button and set the listener
-        recordButton = ((RecordButton) view.findViewById(R.id.mic_button));
-        recordButton.setRecordListener(this);
+        r = (RecordButton) view.findViewById(R.id.mic_button);
+        r.setRecordListener(r);
+        r.setSecondaryRecordListener(this);
+
+        // set up MediaRecorder and outFileName for the RecordButton
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/audiorecordtest.3gp";
+        r.SetOutFileName(mFileName);
+        r.SetAudioRecorder(mRecorder);
+
+        // get PlayButton
+        p = (PlayButton) view.findViewById(R.id.play_button);
+        p.SetOutFileName(mFileName);
+        p.SetMediaPlayer(mPlayer);
+
         return view;
     }
 
@@ -60,9 +90,11 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         //Register this fragment with the AudioTrack in order to receive onPlay
         //onPause e.t.c callbacks
         track.registerController(this, 1);
+        Log.d("hi", "we got here");
     }
 
     private AudioTrackView createTrack(){
+
         //Return new AudioTrack
         AudioTrackView track = new AudioTrackView(getContext());
         track.setHeightInDP(54);
@@ -79,7 +111,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         //TODO replace the counter with an actual model
         //Check if the limit has been reached then disable record button if so
         if(++trackCount >= SoundByteConstants.MAX_TRACK_COUNT)
-            recordButton.setEnabled(false);
+            r/*ecordButton*/.setEnabled(false);
     }
 
     @Override
@@ -89,6 +121,26 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         selectedTrack = (AudioTrackView)v;
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.track_floating_context_menu, menu);
+
+        /*layout.addView(trackView);
+        registerForContextMenu(trackView);
+        if(++trackCount >= SoundByteConstants.MAX_TRACK_COUNT)
+            r.setEnabled(false);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.track_delete:
+                selectedTrack.delete();
+                selectedTrack = null;
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }*/
+
     }
 
     @Override
@@ -113,14 +165,34 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     @Override
+
     /**
      * This method is called when an audioTracks playButton is pressed.
      * When this method is called, the user expects the track to play
      * @param trackId this is the index of the track that a new filter needs to be applied to.
      *                It's the id that's assigned to an audioTrackView on controller registration.
      */
-    public void playTrack(int trackId){
-        //TODO play audio track here
+    public void playTrack(int trackId)
+    {
+        final FilterManager fm = new FilterManager(mFileName,getContext());
+        switch(currentSelectedFilterId)
+        {
+            case 0:
+                fm.Regular();
+                break;
+            case 1:
+                fm.Speedup();
+                break;
+            case 2:
+                fm.Slowdown();
+                break;
+            case 3:
+                fm.HighPitch();
+                break;
+            case 4:
+                fm.LowPitch();
+                break;
+        }
     }
 
     @Override
@@ -160,7 +232,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         //remove audioTrack from the layout
         layout.removeView(track);
         //enable the record button, since the number of tracks is definitely less than the limit right now
-        recordButton.setEnabled(true);
+        r.setEnabled(true);
         trackCount--;
     }
 
@@ -173,7 +245,16 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      * @param filterIndex this is what would be used to identify the filter that should be applied
      *                    the name of the filer it corresponds to can be gotten from SoundByteConstants.FILTER_NAMES
      */
-    public void applyFilter(int trackId, int filterIndex){
-        //TODO
+    public void applyFilter(int trackId, int filterIndex)
+    {
+        if(filterIndex == 1)
+            currentSelectedFilterId = 3;
+        else if(filterIndex == 2)
+            currentSelectedFilterId = 4;
+        else if(filterIndex == 3)
+            currentSelectedFilterId = 1;
+        else if(filterIndex == 4)
+            currentSelectedFilterId = 2;
+
     }
 }
