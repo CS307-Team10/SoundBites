@@ -1,4 +1,4 @@
-package com.soundbytes;
+package com.soundbytes.views;
 
 import android.content.Context;
 import android.media.AudioManager;

@@ -1,11 +1,12 @@
 package com.soundbytes;
 
 import android.graphics.Color;
-import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.soundbytes.views.AudioTrackView;
+import com.soundbytes.views.PlayButton;
+import com.soundbytes.views.RecordButton;
 
 /**
  * Created by Olumide on 10/3/2015.
@@ -29,6 +34,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
 
     private AudioTrackView selectedTrack;
     private int trackCount = 0;
+    private int currentSelectedFilterId = 0;
 
 
     @Override
@@ -46,6 +52,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         // get RecordButton
         r = (RecordButton) view.findViewById(R.id.mic_button);
         r.setRecordListener(r);
+        r.setSecondaryRecordListener(this);
 
         // set up MediaRecorder and outFileName for the RecordButton
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -102,18 +109,21 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         AudioTrackView track = createTrack();
         addTrackToLayout(track);
         track.registerController(this, 1);
+        Log.d("hi", "we got here");
     }
 
     private AudioTrackView createTrack(){
-        return new AudioTrackView(getContext());
+        AudioTrackView track = new AudioTrackView(getContext());
+        track.setHeightInDP(54);
+        return track;
     }
 
     private void addTrackToLayout(AudioTrackView trackView){
         LinearLayout layout = (LinearLayout) getView().findViewById(R.id.track_layout);
-        TextView empty = (TextView)layout.findViewById(R.id.empty_text);
-        if(empty != null)
-            layout.removeView(empty);
         layout.addView(trackView);
+        registerForContextMenu(trackView);
+        if(++trackCount >= SoundByteConstants.MAX_TRACK_COUNT)
+            r.setEnabled(false);
     }
 
     @Override
@@ -136,7 +146,27 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     @Override
-    public void playTrack(int trackId){
+    public void playTrack(int trackId)
+    {
+        final FilterManager fm = new FilterManager(mFileName,getContext());
+        switch(currentSelectedFilterId)
+        {
+            case 0:
+                fm.Regular();
+                break;
+            case 1:
+                fm.Speedup();
+                break;
+            case 2:
+                fm.Slowdown();
+                break;
+            case 3:
+                fm.HighPitch();
+                break;
+            case 4:
+                fm.LowPitch();
+                break;
+        }
 
     }
 
@@ -176,7 +206,16 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     @Override
-    public void applyFilter(int trackId, int filterIndex){
+    public void applyFilter(int trackId, int filterIndex)
+    {
+        if(filterIndex == 1)
+            currentSelectedFilterId = 3;
+        else if(filterIndex == 2)
+            currentSelectedFilterId = 4;
+        else if(filterIndex == 3)
+            currentSelectedFilterId = 1;
+        else if(filterIndex == 4)
+            currentSelectedFilterId = 2;
 
     }
 

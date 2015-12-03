@@ -1,5 +1,7 @@
 package com.soundbytes;
 
+import com.soundbytes.views.AudioTrackView;
+
 /**
  * Created by Olumide on 10/4/2015.
  */
