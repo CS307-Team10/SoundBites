@@ -39,11 +39,11 @@
     </com.soundbytes.views.AudioTrackMeterView>
     <TextView
         android:layout_margin="2dp"
+        android:visibility="invisible"
         android:background="#eeeeee"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:id="@+id/time"
-        android:text="0:01/0:07"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -21,6 +21,11 @@ public class EmptyFragment extends TitledFragment {
     }
 
     @Override
+    public void onVisible(){
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Just adding text to the empty fragment
         TextView text = new TextView(getActivity());

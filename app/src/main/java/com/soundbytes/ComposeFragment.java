@@ -27,6 +27,8 @@ import com.soundbytes.views.AudioTrackView;
 import com.soundbytes.views.PlayButton;
 import com.soundbytes.views.RecordButton;
 
+import java.io.File;
+
 /**
  * Created by Olumide on 10/3/2015.
  */
@@ -84,7 +86,18 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
             }
         });
 
-        (new FilterManager(mFileName, getContext())).setAudioDoneCallback(new FilterManager.OnAudioDoneCallback() {
+        deleteRecordFile();
+        return view;
+    }
+
+    private void deleteRecordFile(){
+        File tempFile = new File(mFileName);
+        if(tempFile.exists())
+            tempFile.delete();
+    }
+
+    private void setAudioPlaybackFinishedCallback(){
+        FilterManager.setAudioDoneCallback(new FilterManager.OnAudioDoneCallback() {
             public void audioFinished() {
                 pauseAllAudio();
             }
@@ -93,7 +106,11 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
                 return ComposeFragment.this.getContext();
             }
         });
-        return view;
+    }
+
+    @Override
+    public void onVisible(){
+        setAudioPlaybackFinishedCallback();
     }
 
     @Override
@@ -102,12 +119,14 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      * the user expects audio to begin recording, this method adds a new audioTrackView to the layout
      */
     public void onStartRecording(){
+        setAudioPlaybackFinishedCallback();
         AudioTrackView track = createTrack();
         //Add the new audioTrack to layout
         addTrackToLayout(track);
         //Register this fragment with the AudioTrack in order to receive onPlay
         //onPause e.t.c callbacks
         track.registerController(this, 1);
+        currentSelectedFilterId = 0;
     }
 
     private AudioTrackView createTrack(){
@@ -146,7 +165,8 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      * note that this gets called even if the user lifts their hand off well after the time limit has passed
      */
     public void onStopRecording(){
-        //TODO stop recording audio
+        if(onlyTrack != null)
+            onlyTrack.autoUpdateRecordPreview(new File(mFileName));
     }
 
     @Override
@@ -155,6 +175,10 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
             case R.id.track_delete:
                 selectedTrack.delete();
                 selectedTrack = null;
+                onlyTrack = null;
+                FilterManager.setAudioDoneCallback(null);
+                //delete file from disk
+                deleteRecordFile();
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -177,16 +201,16 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
             case 0:
                 fm.Regular();
                 break;
-            case 1:
+            case 3://1:
                 fm.Speedup();
                 break;
-            case 2:
+            case 4://2:
                 fm.Slowdown();
                 break;
-            case 3:
+            case 1://3:
                 fm.HighPitch();
                 break;
-            case 4:
+            case 2://4:
                 fm.LowPitch();
                 break;
         }
@@ -200,7 +224,8 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      */
     public void pauseAllAudio(){
         //right now there's just one trackID which is 1
-        pauseTrack(1);
+        if(onlyTrack != null)
+          pauseTrack(1);
     }
 
     @Override
@@ -212,14 +237,14 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      *                It's the id that's assigned to an audioTrackView on controller registration.
      */
     public void pauseTrack(int trackId){
-        (new FilterManager(mFileName,getContext())).stopAudio();
-        onlyTrack.resetPlayButton();
+        FilterManager.stopAudio();
+        if(onlyTrack != null)
+            onlyTrack.resetPlayButton();
     }
 
     @Override
     /**
      * This only removes the audioTrackView from layout as of right now.
-     * TODO delete the audioTrack view from the model after removing from layout
      * @param track this is the AudioTrackView that should be removed from the layout
      * @param trackId this is the index of the track that a new filter needs to be applied to.
      *                It's the id that's assigned to an audioTrackView on controller registration.
@@ -247,14 +272,14 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     public void applyFilter(int trackId, int filterIndex)
     {
         currentSelectedFilterId = filterIndex;
-        if(filterIndex == 1)
-            currentSelectedFilterId = 3;
-        else if(filterIndex == 2)
-            currentSelectedFilterId = 4;
-        else if(filterIndex == 3)
-            currentSelectedFilterId = 1;
-        else if(filterIndex == 4)
-            currentSelectedFilterId = 2;
+//        if(filterIndex == 1)
+//            currentSelectedFilterId = 3;
+//        else if(filterIndex == 2)
+//            currentSelectedFilterId = 4;
+//        else if(filterIndex == 3)
+//            currentSelectedFilterId = 1;
+//        else if(filterIndex == 4)
+//            currentSelectedFilterId = 2;
 
     }
 }

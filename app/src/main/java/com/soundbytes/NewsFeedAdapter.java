@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.andexert.expandablelayout.library.ExpandableLayoutItem;
 import com.soundbytes.db.FeedDatabaseHandler;
 import com.soundbytes.views.SoundByteFeedView;
 
@@ -60,6 +62,7 @@ public class NewsFeedAdapter extends BaseAdapter{
         SoundByteFeedView feedView;
         if ((convertView != null) && convertView instanceof SoundByteFeedView){
             feedView = (SoundByteFeedView)convertView;
+            feedView.resetPlayButton();
         }else {
             feedView = new SoundByteFeedView(mContext);
         }
@@ -68,6 +71,11 @@ public class NewsFeedAdapter extends BaseAdapter{
             feedView.setPauseButton();
         }else{
             feedView.resetPlayButton();
+        }
+        if(feedFragment.isTrackCurrentlyOpen(feedObject.getId())){
+            ((ExpandableLayoutItem) feedView.findViewById(R.id.expandableLayout)).showNow();
+        }else{
+            ((ExpandableLayoutItem) feedView.findViewById(R.id.expandableLayout)).hideNow();
         }
         return feedView;
     }

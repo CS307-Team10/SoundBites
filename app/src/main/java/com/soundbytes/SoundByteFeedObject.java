@@ -12,13 +12,13 @@ public class SoundByteFeedObject {
     private String friend;
     private Date date;
     private File audioPath;
-    private String filter;
+    private int filter;
     private float speed;
     private boolean opened;
     private String audio_id;
 
     //ID | SENT? | TO/FROM| DATE | TIME |FILENAME | FILTER | SPEED
-    public SoundByteFeedObject(int id, boolean sent, String friend, Date date, File audioPath, String filter, float speed, boolean opened, String audio_id){
+    public SoundByteFeedObject(int id, boolean sent, String friend, Date date, File audioPath, int filter, float speed, boolean opened, String audio_id){
         this.id = id;
         this.sent = sent;
         this.friend = friend;
@@ -68,7 +68,7 @@ public class SoundByteFeedObject {
         return audioPath.getPath();
     }
 
-    public String getFilter(){
+    public int getFilter(){
         return filter;
     }
 

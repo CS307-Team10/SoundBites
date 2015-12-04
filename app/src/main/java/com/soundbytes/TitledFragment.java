@@ -8,4 +8,5 @@ import android.support.v4.app.Fragment;
  */
 public abstract class TitledFragment extends Fragment {
     abstract String getTitle();
+    abstract void onVisible();
 }

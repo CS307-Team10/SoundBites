@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
+import android.widget.TextView;
 
 import com.soundbytes.AudioTrackController;
+import com.soundbytes.FilterManager;
 import com.soundbytes.R;
 import com.soundbytes.SoundByteConstants;
 
@@ -40,6 +42,7 @@ public class AudioTrackView extends RelativeLayout {
     private int currentFilter = 0;
     private GestureDetector mDetector;
     private Scroller scroller;
+    private TextView timeText;
     protected float[] filterDists = {0f,0f};
 
     /**
@@ -83,6 +86,7 @@ public class AudioTrackView extends RelativeLayout {
         //Find important views in the layout
         playButton = (ImageButton)view.findViewById(R.id.play_pause_button);
         meter = (AudioTrackMeterView)view.findViewById(R.id.track_meter_view);
+        timeText = (TextView)findViewById(R.id.time);
 
         //attach playButton onClickListener
         playButton.setOnClickListener(createPlayOnClickListener());
@@ -133,6 +137,8 @@ public class AudioTrackView extends RelativeLayout {
         if(!soundFile.exists())
             throw new IllegalArgumentException(String.format("File %s doesn't exist",
                     soundFile.getAbsolutePath()));
+        long duration = FilterManager.getSoundDuration(soundFile.getAbsolutePath(), getContext());
+        setTime(duration);
     }
 
     private boolean isPlayButton(){
@@ -154,7 +160,7 @@ public class AudioTrackView extends RelativeLayout {
         }
     }
 
-    public void resetPlayButton(){
+    public void resetPlayButton() {
         playButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_black_48dp));
         playButton.setTag(true);
     }
@@ -175,11 +181,11 @@ public class AudioTrackView extends RelativeLayout {
         return false;
     }
 
-//    @Override
-//    /**
-//     * This method decides what to do when the view is touched,
-//     * whether to allow the view pager intercept it of whether to let the scrollview intercept it
-//     */
+    @Override
+    /**
+     * This method decides what to do when the view is touched,
+     * whether to allow the view pager intercept it of whether to let the scrollview intercept it
+     */
     public boolean onTouchEvent(MotionEvent event){
         boolean result = mDetector.onTouchEvent(event);
         if(!result) {
@@ -256,6 +262,11 @@ public class AudioTrackView extends RelativeLayout {
                 AudioTrackView.this.playButtonClicked();
             }
         };
+    }
+
+    public void setTime(long milliseconds){
+        timeText.setText((milliseconds/1000)+"s");
+        timeText.setVisibility(View.VISIBLE);
     }
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {

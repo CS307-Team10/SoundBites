@@ -40,7 +40,7 @@ public class MyGcmListenerService extends GcmListenerService implements DBHandle
         }catch (NullPointerException e){
             date = new Date();
         }
-        String filter =  data.getString("filter");
+        int filter =  Integer.parseInt(data.getString("filter"));
         float speed = Float.parseFloat(data.getString("speed"));
 
         SoundByteFeedObject feedObject = new SoundByteFeedObject(id, sent, friend, date, null, filter, speed, false, audio_id);

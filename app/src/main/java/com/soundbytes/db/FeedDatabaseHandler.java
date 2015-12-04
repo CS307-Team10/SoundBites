@@ -160,7 +160,7 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
             audio_id = cursor.getString(9);
         }
         cursor.close();
-        return new SoundByteFeedObject(id, sent, friend, date, soundFile, filter, speed, read, audio_id);
+        return new SoundByteFeedObject(id, sent, friend, date, soundFile, Integer.parseInt(filter), speed, read, audio_id);
     }
 
     public void addToFeedDB(SoundByteFeedObject  feedObject){

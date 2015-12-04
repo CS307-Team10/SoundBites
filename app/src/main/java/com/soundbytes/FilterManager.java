@@ -128,11 +128,27 @@ public class FilterManager
         });
     }
 
+    public void customSpeed(final float playbackSpeed){
+        if (isPlaying)
+            return;
+        sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
+        final int soundId = sp.load(audioName, 1);
+        AudioManager mgr = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
+        final float volume = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        sp.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                setupSingle(soundPool, sampleId);
+                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
+            }
+        });
+    }
+
     private void setupSingle(SoundPool sp, int soundId){
         sp.autoPause();
         isPlaying = true;
         if(callback != null){
-            long duration = getSoundDuration(soundId, callback.getContext());
+            long duration = getSoundDuration(audioName, callback.getContext());
             Log.v("duration", ""+duration);
             r = new MyRunnable() {
                 boolean stopped = false;
@@ -152,23 +168,24 @@ public class FilterManager
         }
     }
 
-    private long getSoundDuration(int rawId, Context context){
+    public static long getSoundDuration(String audioName, Context context){
         MediaPlayer player = MediaPlayer.create(context, Uri.parse((new File(audioName)).toURI().toString()));
         int duration = player.getDuration();
         player.release();
         return duration;
     }
 
-    public void setAudioDoneCallback(OnAudioDoneCallback callback){
-        this.callback = callback;
+    public static void setAudioDoneCallback(OnAudioDoneCallback callback){
+        FilterManager.callback = callback;
     }
 
-    public void stopAudio(){
+    public static void stopAudio(){
         Log.v("fm", "stop audio");
         sp.stop(playingId);
         sp.autoResume();
         handler.removeCallbacks(null);
-        r.stop();
+        if(r != null)
+            r.stop();
         isPlaying = false;
     }
 

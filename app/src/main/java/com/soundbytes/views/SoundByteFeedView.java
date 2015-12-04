@@ -71,6 +71,10 @@ public class SoundByteFeedView extends ExpandableLayoutItem {
         spinner.setVisibility(INVISIBLE);
     }
 
+    public AudioTrackView getTrackView(){
+        return trackView;
+    }
+
     public void setPauseButton(){
         trackView.setPauseButton();
     }

@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +46,22 @@ public class MainActivity extends AppCompatActivity {
         //Populate viewpager
         viewPager = (ViewPager)findViewById(R.id.view_pager);
         viewPager.setAdapter(new CustomViewPagerAdapter(getSupportFragmentManager(), getFragments()));
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.v("Position", ""+position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         //Attach viewpager indicator
         TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.view_pager_indicator);

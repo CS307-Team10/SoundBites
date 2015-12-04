@@ -117,9 +117,9 @@ public class RecordButton extends ImageButton implements RecordButtonListeners {
         updateHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(isRecording()) {
+                if (isRecording()) {
                     //stuff used in the visualization
-                    angleSweep = ((System.currentTimeMillis() - startTime)*360f)/ SoundByteConstants.TIME_LIMIT;
+                    angleSweep = ((System.currentTimeMillis() - startTime) * 360f) / SoundByteConstants.TIME_LIMIT;
 
                     updateHandler.postDelayed(this, 10);
                 } else
@@ -148,9 +148,11 @@ public class RecordButton extends ImageButton implements RecordButtonListeners {
      */
     private void cleanUpHandlers(){
         //Stop recording if still recording
-        if(isRecording())
+        if(isRecording()) {
             recordListener.onStopRecording();
+            secondaryRecListener.onStopRecording();
             isRecording = false;
+        }
 
         //Stop the handlers
         try {
@@ -174,7 +176,7 @@ public class RecordButton extends ImageButton implements RecordButtonListeners {
             result = super.onTouchEvent(event);
         }
         //Confirm that the record button is still pressed
-        if((!isPressed() || (event.getAction() == MotionEvent.ACTION_UP)) && isRecording() || timerExpired) {
+        if((!isPressed() || (event.getAction() == MotionEvent.ACTION_UP)) && isRecording()/* || timerExpired*/) {
             //If record button is no longer pressed, stop the recording
             Log.v("Gesture", "stop " + event.getAction());
             isRecording = false;
@@ -228,7 +230,7 @@ public class RecordButton extends ImageButton implements RecordButtonListeners {
 
     @Override
     public void onStartRecording() {
-        t = new CountDownTimer(6000, 1000) {
+        t = new CountDownTimer(SoundByteConstants.TIME_LIMIT, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.d("TIMER", millisUntilFinished + "");
