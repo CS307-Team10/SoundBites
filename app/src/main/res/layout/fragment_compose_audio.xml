@@ -79,7 +79,7 @@
                 android:background="?android:selectableItemBackground"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:id="@+id/imageButton" />
+                android:id="@+id/pause_button" />
             <com.soundbytes.views.PlayButton
                 android:contentDescription="@string/play_button_desc"
                 android:scaleType="fitXY"

@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.media.SoundPool;
 
+import com.soundbytes.FilterManager;
+
 import java.io.IOException;
 
 /**
@@ -18,12 +20,11 @@ import java.io.IOException;
  */
 public class PlayButton extends ImageButton
 {
-    boolean mStartPlaying = true;
-
     private MediaPlayer mPlayer = null;
 
     private static final String LOG_TAG = "AudioRecordTest";
     private String mFileName = null;
+    private FilterManager fm;
 
     public PlayButton(Context ctx)
     {
@@ -40,8 +41,7 @@ public class PlayButton extends ImageButton
     OnClickListener clicker = new OnClickListener() {
         public void onClick(View v)
         {
-            onPlay(mStartPlaying);
-            mStartPlaying = !mStartPlaying;
+            onPlay();
         }
     };
 
@@ -53,19 +53,18 @@ public class PlayButton extends ImageButton
     public void SetOutFileName(String fileName)
     {
         mFileName = fileName;
+        fm = new FilterManager(fileName, getContext());
     }
 
-    private void onPlay(boolean start)
+    private void onPlay()
     {
-        if(start)
             startPlaying();
-        else
-            stopPlaying();
     }
 
     private void startPlaying()
     {
-        final float playbackSpeed = 1.0f;
+        fm.Regular();
+        /*final float playbackSpeed = 1.0f;
         SoundPool sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         final int soundId = sp.load(mFileName, 1);
         AudioManager mgr = (AudioManager) this.getContext().getSystemService(Context.AUDIO_SERVICE);
@@ -75,7 +74,7 @@ public class PlayButton extends ImageButton
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
             }
-        });
+        });*/
         /*
         mPlayer = new MediaPlayer();
         try{

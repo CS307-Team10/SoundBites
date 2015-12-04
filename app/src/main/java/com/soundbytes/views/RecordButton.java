@@ -6,12 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.CountDownTimer;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -24,12 +20,7 @@ import android.os.Handler;
 import com.soundbytes.RecordButtonListeners;
 import com.soundbytes.SoundByteConstants;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Timer;
 
 /**
  * Created by Joe on 10/7/2015.
@@ -279,7 +270,7 @@ public class RecordButton extends ImageButton implements RecordButtonListeners {
 
     private void stopRecording()
     {
-        Log.d("HI","Stopping Recording");
+        Log.d("HI", "Stopping Recording");
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
@@ -307,9 +298,9 @@ public class RecordButton extends ImageButton implements RecordButtonListeners {
                 Log.v("Gesture", "longPress");
                 getParent().requestDisallowInterceptTouchEvent(true);
                 recordListener.onStartRecording();
-                isRecording = true;
                 secondaryRecListener.onStartRecording();
                 initializeHandlers();
+                isRecording = true;
             }
         }
 

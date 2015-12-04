@@ -1,5 +1,6 @@
 package com.soundbytes;
 
+import android.content.Context;
 import android.view.ContextMenu;
 
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,7 +33,7 @@ import com.soundbytes.views.RecordButton;
 public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
     private String title;
 
-    private AudioTrackView selectedTrack;
+    private AudioTrackView selectedTrack, onlyTrack;
     private int trackCount = 0;
 
     private RecordButton r;
@@ -75,6 +77,22 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         p.SetOutFileName(mFileName);
         p.SetMediaPlayer(mPlayer);
 
+        view.findViewById(R.id.pause_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pauseAllAudio();
+            }
+        });
+
+        (new FilterManager(mFileName, getContext())).setAudioDoneCallback(new FilterManager.OnAudioDoneCallback() {
+            public void audioFinished() {
+                pauseAllAudio();
+            }
+
+            public Context getContext() {
+                return ComposeFragment.this.getContext();
+            }
+        });
         return view;
     }
 
@@ -90,13 +108,12 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         //Register this fragment with the AudioTrack in order to receive onPlay
         //onPause e.t.c callbacks
         track.registerController(this, 1);
-        Log.d("hi", "we got here");
     }
 
     private AudioTrackView createTrack(){
-
         //Return new AudioTrack
         AudioTrackView track = new AudioTrackView(getContext());
+        onlyTrack = track;
         track.setHeightInDP(54);
         return track;
     }
@@ -111,7 +128,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         //TODO replace the counter with an actual model
         //Check if the limit has been reached then disable record button if so
         if(++trackCount >= SoundByteConstants.MAX_TRACK_COUNT)
-            r/*ecordButton*/.setEnabled(false);
+            r.setEnabled(false);
     }
 
     @Override
@@ -121,26 +138,6 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         selectedTrack = (AudioTrackView)v;
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.track_floating_context_menu, menu);
-
-        /*layout.addView(trackView);
-        registerForContextMenu(trackView);
-        if(++trackCount >= SoundByteConstants.MAX_TRACK_COUNT)
-            r.setEnabled(false);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item)
-    {
-        switch(item.getItemId())
-        {
-            case R.id.track_delete:
-                selectedTrack.delete();
-                selectedTrack = null;
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }*/
-
     }
 
     @Override
@@ -202,7 +199,8 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      * TODO iterate through the audioTrackViews and call resetAudioButton()
      */
     public void pauseAllAudio(){
-
+        //right now there's just one trackID which is 1
+        pauseTrack(1);
     }
 
     @Override
@@ -214,7 +212,8 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      *                It's the id that's assigned to an audioTrackView on controller registration.
      */
     public void pauseTrack(int trackId){
-        //TODO
+        (new FilterManager(mFileName,getContext())).stopAudio();
+        onlyTrack.resetPlayButton();
     }
 
     @Override
@@ -247,6 +246,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      */
     public void applyFilter(int trackId, int filterIndex)
     {
+        currentSelectedFilterId = filterIndex;
         if(filterIndex == 1)
             currentSelectedFilterId = 3;
         else if(filterIndex == 2)
