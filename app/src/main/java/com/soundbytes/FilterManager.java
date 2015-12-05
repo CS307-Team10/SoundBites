@@ -148,7 +148,7 @@ public class FilterManager
         sp.autoPause();
         isPlaying = true;
         if(callback != null){
-            long duration = (long)(callback.getPlaybackSpeed()*getSoundDuration(audioName, callback.getContext()));
+            long duration = (long)(getSoundDuration(audioName, callback.getContext())/callback.getPlaybackSpeed());
             Log.v("duration", ""+duration);
             r = new MyRunnable() {
                 boolean stopped = false;
