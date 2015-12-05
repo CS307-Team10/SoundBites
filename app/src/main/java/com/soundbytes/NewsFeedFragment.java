@@ -141,6 +141,7 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
     @Override
     public void onVisible() {
         FilterManager.setAudioDoneCallback(null);
+        ((MainActivity)getActivity()).clearFocus(expListView);
     }
 
     /**
@@ -226,7 +227,7 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
                     public void run() {
                         try{
                             Log.v("audio path", "File name is:" + feedObject.getAudioPath());
-                            track.autoUpdateRecordPreview(new File(feedObject.getAudioPath()));
+                            track.autoUpdateRecordPreview(new File(feedObject.getAudioPath()), feedObject.getPlaybackSpeed());
                             currentlyOpen = feedObject.getId();
                             return;
                         }catch (IllegalArgumentException e){

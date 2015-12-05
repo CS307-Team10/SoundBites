@@ -136,24 +136,28 @@ public class AudioTrackView extends RelativeLayout {
         meter.updateRecordPreview(amplitude, ratio);
     }
 
-    public void autoUpdateRecordPreview(File soundFile) {
+    public void autoUpdateRecordPreview(File soundFile, float playbackSpeed) {
         if(!soundFile.exists())
             throw new IllegalArgumentException(String.format("File %s doesn't exist",
                     soundFile.getAbsolutePath()));
         final long duration = FilterManager.getSoundDuration(soundFile.getAbsolutePath(), getContext());
 //        meter.clearRecordPreview();
-        setTime(duration);
+        setTime((long)(duration/playbackSpeed));
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (getCount() <= duration / 90) {
                     upCount();
-                    updateRecordPreview(random.nextInt((int) (0.8 * Short.MAX_VALUE)), 95f/duration);
+                    updateRecordPreview(random.nextInt((int) (0.8 * Short.MAX_VALUE)), 95f / duration);
                     handler.postDelayed(this, 0);
                 }
             }
         }, 0);
+    }
+
+    public void autoUpdateRecordPreview(File soundFile) {
+        autoUpdateRecordPreview(soundFile, 1f);
     }
 
     private int getCount(){
