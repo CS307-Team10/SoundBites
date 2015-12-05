@@ -102,6 +102,21 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
                 pauseAllAudio();
             }
 
+            public float getPlaybackSpeed(){
+                switch(currentSelectedFilterId){
+                    case 3:
+                        return FilterManager.speedPlaybackSpeed;
+                    case 4:
+                        return FilterManager.slowPlaybackSpeed;
+                    case 1:
+                        return FilterManager.highPlaybackSpeed;
+                    case 2:
+                        return FilterManager.lowPlaybackSpeed;
+                    default:
+                        return FilterManager.regularPlaybackSpeed;
+                }
+            }
+
             public Context getContext() {
                 return ComposeFragment.this.getContext();
             }
@@ -176,6 +191,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
                 selectedTrack.delete();
                 selectedTrack = null;
                 onlyTrack = null;
+                currentSelectedFilterId = 0;
                 FilterManager.setAudioDoneCallback(null);
                 //delete file from disk
                 deleteRecordFile();

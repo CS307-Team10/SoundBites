@@ -28,6 +28,7 @@ import com.soundbytes.SoundByteConstants;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Created by Olumide on 10/5/2015.
@@ -44,6 +45,8 @@ public class AudioTrackView extends RelativeLayout {
     private Scroller scroller;
     private TextView timeText;
     protected float[] filterDists = {0f,0f};
+    private int barCount = 0;
+    private final Random random = new Random();;
 
     /**
      * Constructor
@@ -129,16 +132,36 @@ public class AudioTrackView extends RelativeLayout {
      * @param amplitude this is the maximum amplitude of the recorded audio since
      *                  the last time this method was called
      */
-    public void updateRecordPreview(int amplitude) {
-        meter.updateRecordPreview(amplitude);
+    public void updateRecordPreview(int amplitude, float ratio) {
+        meter.updateRecordPreview(amplitude, ratio);
     }
 
     public void autoUpdateRecordPreview(File soundFile) {
         if(!soundFile.exists())
             throw new IllegalArgumentException(String.format("File %s doesn't exist",
                     soundFile.getAbsolutePath()));
-        long duration = FilterManager.getSoundDuration(soundFile.getAbsolutePath(), getContext());
+        final long duration = FilterManager.getSoundDuration(soundFile.getAbsolutePath(), getContext());
+//        meter.clearRecordPreview();
         setTime(duration);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getCount() <= duration / 90) {
+                    upCount();
+                    updateRecordPreview(random.nextInt((int) (0.8 * Short.MAX_VALUE)), 95f/duration);
+                    handler.postDelayed(this, 0);
+                }
+            }
+        }, 0);
+    }
+
+    private int getCount(){
+        return barCount;
+    }
+
+    private void upCount(){
+        barCount++;
     }
 
     private boolean isPlayButton(){
@@ -265,7 +288,8 @@ public class AudioTrackView extends RelativeLayout {
     }
 
     public void setTime(long milliseconds){
-        timeText.setText((milliseconds/1000)+"s");
+        int time = Math.round(milliseconds / 1000f);
+        timeText.setText(getResources().getString(R.string.time_text, time));
         timeText.setVisibility(View.VISIBLE);
     }
 
@@ -298,7 +322,6 @@ public class AudioTrackView extends RelativeLayout {
             updateHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.v("Handler", "run "+scroller.isFinished());
                     if (!scroller.isFinished()) {
                         //stuff used in the visualization
                         scroller.computeScrollOffset();

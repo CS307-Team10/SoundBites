@@ -1,11 +1,17 @@
 package com.soundbytes.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,8 +51,7 @@ public class SoundByteFeedView extends ExpandableLayoutItem {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.soundbyte_feed_view, this);
         trackView = (AudioTrackView)view.findViewById(R.id.feed_trackview);
-        if(trackView == null)
-            Log.v("FeedView", "trackview is null");
+        trackView.disableSwipe(true);
         friend = (TextView)view.findViewById(R.id.friend_text);
         date = (TextView)view.findViewById(R.id.date_text);
         imageView = (ImageView)view.findViewById(R.id.feed_type_image);
@@ -81,5 +86,31 @@ public class SoundByteFeedView extends ExpandableLayoutItem {
 
     public void resetPlayButton(){
         trackView.resetPlayButton();
+    }
+
+    /*
+     * Modified from Stackoverflow answer courtesy of @radhoo
+     * http://stackoverflow.com/a/14183532/2057884
+     */
+    public void imageViewAnimatedChange(int newImageDrawableResource) {
+        final Animation anim_out = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out);
+        final Animation anim_in  = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
+        final Drawable drawable = getResources().getDrawable(newImageDrawableResource);
+        anim_out.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation)
+            {
+                imageView.setImageDrawable(drawable);
+                anim_in.setAnimationListener(new Animation.AnimationListener() {
+                    @Override public void onAnimationStart(Animation animation) {}
+                    @Override public void onAnimationRepeat(Animation animation) {}
+                    @Override public void onAnimationEnd(Animation animation) {}
+                });
+                imageView.startAnimation(anim_in);
+            }
+        });
+        imageView.startAnimation(anim_out);
     }
 }

@@ -34,7 +34,7 @@ public class MyGcmListenerService extends GcmListenerService implements DBHandle
         int id = dbHandler.getCount();
         boolean sent = Boolean.parseBoolean(data.getString("sent"));
         String friend = data.getString("friend");
-        Date date, time;
+        Date date;
         try {
             date = new Date(Long.parseLong(data.getString("date")));
         }catch (NullPointerException e){
@@ -44,7 +44,8 @@ public class MyGcmListenerService extends GcmListenerService implements DBHandle
         float speed = Float.parseFloat(data.getString("speed"));
 
         SoundByteFeedObject feedObject = new SoundByteFeedObject(id, sent, friend, date, null, filter, speed, false, audio_id);
-        sendNotification(feedObject);
+        if(!feedObject.getIsSent())
+            sendNotification(feedObject);
         if(dbHandlerReady && dbHandler != null) {
             dbHandler.addToFeedDB(feedObject);
             broadcastIntent();

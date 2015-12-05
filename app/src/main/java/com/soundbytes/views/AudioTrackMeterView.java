@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
+import com.soundbytes.R;
 import com.soundbytes.SoundByteConstants;
 
 import java.util.Iterator;
@@ -26,12 +27,12 @@ public class AudioTrackMeterView extends LinearLayout{
     private LinkedList<Point> amplitudeList;
     private Paint paint;
     private int stepSize = 0;
-    private int viewHeight = 0;
     private boolean swipeDisabled = false;
     private int currentFilter = 0;
     private Scroller scroller = null;
     private Paint textPaint;
     protected float[] filterDists = {0f,0f};
+    private float ratioStep;
 
     /**
      * Constructor
@@ -77,12 +78,15 @@ public class AudioTrackMeterView extends LinearLayout{
     private void init(){
         amplitudeList = new LinkedList<>();
         paint = new Paint();
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeWidth(5);
+        paint.setColor(getResources().getColor(R.color.audio_bar_color));
 
         textPaint = new Paint();
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(60f);
-        textPaint.setAlpha(180);
-        textPaint.setColor(Color.WHITE);
+//        textPaint.setAlpha(250);
+        textPaint.setColor(getResources().getColor(R.color.filter_text_color));
         textPaint.setFakeBoldText(true);
         textPaint.setShadowLayer(20f, 0, 0, Color.argb(0, 0, 0, 100));
     }
@@ -100,16 +104,17 @@ public class AudioTrackMeterView extends LinearLayout{
      */
     public void onDraw(Canvas canvas){
         super.onDraw(canvas);
+        stepSize = (int)(ratioStep * getWidth());
         if(amplitudeList.size() != 0) {
             Iterator<Point> it = amplitudeList.iterator();
-            Point previousPoint = it.next();
             Point currentPoint;
             //while there are points
             while (it.hasNext()) {
                 currentPoint = it.next();
                 //draw line from previous point to current point
-                canvas.drawLine(previousPoint.x * stepSize, previousPoint.y,
-                        currentPoint.x * stepSize, currentPoint.y, paint);
+                int y = (getHeight() - currentPoint.y)/2;
+                canvas.drawLine(currentPoint.x * stepSize, y,
+                        currentPoint.x * stepSize, getHeight() - y, paint);
             }
         }
 
@@ -146,16 +151,6 @@ public class AudioTrackMeterView extends LinearLayout{
         canvas.drawText(text.toUpperCase(), x + xOffset, y + yOffset, paint);
     }
 
-    @Override
-    /*
-     * THis method is called when the size of the screen changes for any reason
-     */
-    public void onSizeChanged (int w, int h, int oldw, int oldh){
-        super.onSizeChanged(w, h, oldw, oldh);
-        float timeInc = 0.01f; //As in updated every 10ms
-        stepSize = (int)((w - getPaddingRight() - getPaddingLeft())/(SoundByteConstants.TIME_LIMIT/timeInc));
-        viewHeight = h - getPaddingBottom() - getPaddingTop() - 8;//8 just cause
-    }
 
     /**
      * This methid stores the relevan info needed by the onDraw method in order
@@ -163,12 +158,13 @@ public class AudioTrackMeterView extends LinearLayout{
      * @param amplitude the maximum amplitude of the recording
      *                  since the last time this method was called
      */
-    public void updateRecordPreview(int amplitude){
+    public void updateRecordPreview(int amplitude, float ratio){
         //scale amplitude to view height - padding
         // According to http://stackoverflow.com/a/13683201/2057884 the max is Short.MAX_VALUE
-        int scaledAmplitude = (amplitude * viewHeight)/ Short.MAX_VALUE;
+        int scaledAmplitude = (amplitude * getHeight())/ Short.MAX_VALUE;
 
         final int step = 1; //Just make it one then multiply in onDraw since it can change
+        ratioStep = ratio;
         int xValue = 0;
         if(amplitudeList.size() != 0){
             xValue = amplitudeList.getLast().x + step;
@@ -176,5 +172,9 @@ public class AudioTrackMeterView extends LinearLayout{
         //add the point to the list
         amplitudeList.add(new Point(xValue, scaledAmplitude));
         invalidate();
+    }
+
+    public void clearRecordPreview(){
+        amplitudeList.clear();
     }
 }

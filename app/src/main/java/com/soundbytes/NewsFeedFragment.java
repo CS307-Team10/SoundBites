@@ -4,17 +4,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.andexert.expandablelayout.library.ExpandableLayoutItem;
 import com.andexert.expandablelayout.library.ExpandableLayoutListView;
@@ -88,11 +92,14 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
     public void playTrack(int trackId){
         pauseAllAudio();
         currentlyPlaying = trackId;
-        dbHandler.markAsRead(trackId);
-        setAudioPlaybackFinishedCallback();
-        //TODO play audio track here
-        adapter.notifyDataSetChanged();
         SoundByteFeedObject feedObject = dbHandler.getFeedObject(trackId);
+        setAudioPlaybackFinishedCallback(feedObject.getPlaybackSpeed());
+        if(!feedObject.hasBeenOpened()) {
+            SoundByteFeedView feedView = getFeedView(adapter.getCount() - 1 - trackId);
+            if (feedView != null)
+                feedView.imageViewAnimatedChange(R.drawable.opened);
+        }
+        dbHandler.markAsRead(trackId);
         FilterManager fm = new FilterManager(feedObject.getAudioPath(), getContext());
         switch(feedObject.getFilter()){
             case 0:
@@ -115,10 +122,14 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
         }
     }
 
-    private void setAudioPlaybackFinishedCallback(){
+    private void setAudioPlaybackFinishedCallback(final float speed){
         FilterManager.setAudioDoneCallback(new FilterManager.OnAudioDoneCallback() {
             public void audioFinished() {
                 pauseAllAudio();
+            }
+
+            public float getPlaybackSpeed(){
+                return speed;
             }
 
             public Context getContext() {
@@ -128,8 +139,8 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
     }
 
     @Override
-    public void onVisible(){
-        setAudioPlaybackFinishedCallback();
+    public void onVisible() {
+        FilterManager.setAudioDoneCallback(null);
     }
 
     /**
@@ -155,7 +166,7 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
     @Override
     public void pauseTrack(int trackId){
         FilterManager.stopAudio();
-        AudioTrackView trackView = getView(adapter.getCount() -1 - trackId);
+        AudioTrackView trackView = getTrackView(adapter.getCount() - 1 - trackId);
         if(trackView != null)
             trackView.resetPlayButton();
     }
@@ -210,15 +221,23 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
                 }
                 //Check if audio file is present, if not //show loading and download it
                 final AudioTrackView track = (AudioTrackView)mEplItem.getContentLayout().findViewById(R.id.feed_trackview);
-                try{
-                    Log.v("audio path", "File name is:" + feedObject.getAudioPath());
-                    track.autoUpdateRecordPreview(new File(feedObject.getAudioPath()));
-                    currentlyOpen = feedObject.getId();
-                    return;
-                }catch (Exception e){
-                    //Do nothing
-                }
-                if(feedObject.getAudioPath() == null || feedObject.getAudioPath().equals("")) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            Log.v("audio path", "File name is:" + feedObject.getAudioPath());
+                            track.autoUpdateRecordPreview(new File(feedObject.getAudioPath()));
+                            currentlyOpen = feedObject.getId();
+                            return;
+                        }catch (IllegalArgumentException e){
+                            //Do nothing
+                        }catch (NullPointerException e){
+                            //Do nothing
+                            e.printStackTrace();
+                        }
+                    }
+                }, 200);
+                if(feedObject.getAudioPath() == null || feedObject.getAudioPath().equals("") || !(new File(feedObject.getAudioPath())).exists()) {
                     mEplItem.hideNow();
                     currentlyOpen = -1;
                     //make spinner visible
@@ -252,6 +271,7 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
         };
     }
 
+
     private File createAudioFile(String friend, boolean isSent){
         String suffix = ".3gp";
         String prefix = "SB_";
@@ -267,7 +287,9 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
         return new File(storageDir, imageFileName+suffix);
     }
 
-    private AudioTrackView getView(int wantedPosition){
+
+    @Nullable
+    private SoundByteFeedView getFeedView(int wantedPosition){
         int firstPosition = expListView.getFirstVisiblePosition() - expListView.getHeaderViewsCount(); // This is the same as child #0
         int wantedChild = wantedPosition - firstPosition;
         // Say, first visible position is 8, you want position 10, wantedChild will now be 2
@@ -276,6 +298,14 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
             return  null;
         }
         // Could also check if wantedPosition is between listView.getFirstVisiblePosition() and listView.getLastVisiblePosition() instead.
-        return ((SoundByteFeedView)expListView.getChildAt(wantedChild)).getTrackView();
+        return (SoundByteFeedView)expListView.getChildAt(wantedChild);
+    }
+
+    @Nullable
+    private AudioTrackView getTrackView(int wantedPosition){
+        SoundByteFeedView feedView = getFeedView(wantedPosition);
+        if(feedView == null)
+            return null;
+        return feedView.getTrackView();
     }
 }

@@ -29,6 +29,11 @@ public class FilterManager
     private static SoundPool sp;
     private static MyRunnable r;
     private static boolean isPlaying;
+    public static final float regularPlaybackSpeed = 1.0f;
+    public static final float speedPlaybackSpeed = 2.0f;
+    public static final float slowPlaybackSpeed = 0.6f;
+    public static final float highPlaybackSpeed = 1.2f;
+    public static final float lowPlaybackSpeed = 0.8f;
 
     public FilterManager(String inputAudio, Context ctx)
     {
@@ -41,7 +46,6 @@ public class FilterManager
     {
         if (isPlaying)
             return;
-        final float playbackSpeed = 1.0f;
         sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         final int soundId = sp.load(audioName, 1);
         AudioManager mgr = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
@@ -50,7 +54,7 @@ public class FilterManager
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 setupSingle(soundPool, sampleId);
-                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
+                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, regularPlaybackSpeed);
             }
         });
     }
@@ -59,7 +63,6 @@ public class FilterManager
     {
         if (isPlaying)
             return;
-        final float playbackSpeed = 2.0f;
         sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         final int soundId = sp.load(audioName, 1);
         AudioManager mgr = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
@@ -68,7 +71,7 @@ public class FilterManager
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 setupSingle(soundPool, sampleId);
-                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
+                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, speedPlaybackSpeed);
             }
         });
 
@@ -78,7 +81,6 @@ public class FilterManager
     {
         if (isPlaying)
             return;
-        final float playbackSpeed = 0.6f;
         sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         final int soundId = sp.load(audioName, 1);
         AudioManager mgr = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
@@ -87,7 +89,7 @@ public class FilterManager
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 setupSingle(soundPool, sampleId);
-                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
+                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, slowPlaybackSpeed);
             }
         });
     }
@@ -96,7 +98,6 @@ public class FilterManager
     {
         if (isPlaying)
             return;
-        final float playbackSpeed = 1.2f;
         sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         final int soundId = sp.load(audioName, 1);
         AudioManager mgr = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
@@ -105,7 +106,7 @@ public class FilterManager
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 setupSingle(soundPool, sampleId);
-                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
+                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, highPlaybackSpeed);
             }
         });
     }
@@ -114,7 +115,6 @@ public class FilterManager
     {
         if (isPlaying)
             return;
-        final float playbackSpeed = 0.8f;
         sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         final int soundId = sp.load(audioName, 1);
         AudioManager mgr = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
@@ -123,7 +123,7 @@ public class FilterManager
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 setupSingle(soundPool, sampleId);
-                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, playbackSpeed);
+                playingId = soundPool.play(soundId, volume * 2, volume * 2, 1, 0, lowPlaybackSpeed);
             }
         });
     }
@@ -148,7 +148,7 @@ public class FilterManager
         sp.autoPause();
         isPlaying = true;
         if(callback != null){
-            long duration = getSoundDuration(audioName, callback.getContext());
+            long duration = (long)(callback.getPlaybackSpeed()*getSoundDuration(audioName, callback.getContext()));
             Log.v("duration", ""+duration);
             r = new MyRunnable() {
                 boolean stopped = false;
@@ -191,6 +191,7 @@ public class FilterManager
 
     public interface OnAudioDoneCallback{
         void audioFinished();
+        float getPlaybackSpeed();
         Context getContext();
     }
 

@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <color name="audio_bar_color">#bdbdbd</color>
+    <color name="filter_text_color">#909090</color>
+    <color name="sound_byte_blue">#750d95d4</color>
+</resources>

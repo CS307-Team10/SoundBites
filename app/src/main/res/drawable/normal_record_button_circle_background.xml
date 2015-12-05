@@ -3,7 +3,7 @@
     <item android:gravity="center" android:top="8dp" android:left="8dp" android:right="8dp" android:bottom="8dp">
         <shape android:shape="oval"  xmlns:android="http://schemas.android.com/apk/res/android">
             <solid
-                android:color="#750d95d4"/>
+                android:color="@color/sound_byte_blue"/>
             <size
                 android:width="76dp"
                 android:height="76dp"/>

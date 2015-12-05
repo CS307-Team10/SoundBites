@@ -2,10 +2,13 @@ package com.soundbytes.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.soundbytes.SoundByteConstants;
@@ -47,6 +50,28 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         AsyncGetWritableDB asyncGetWritableDB = new AsyncGetWritableDB(this, false);
         asyncGetWritableDB.delegate = this;
         asyncGetWritableDB.execute();
+    }
+
+    /**
+     * @param context context is context
+     * @param friend friend the Soundbyte was sent to
+     * @param filter this is what would be used to identify the filter that should be applied
+     *                    the name of the filer it corresponds to can be gotten from SoundByteConstants.FILTER_NAMES
+     */
+    public static void soundByteSent(final Context context, final String friend, final int filter){
+        DBHandlerResponse response = new DBHandlerResponse() {
+            @Override
+            public void onDBReady() {
+                if(feedDatabaseHandler != null) {
+                    SoundByteFeedObject feedObject = new SoundByteFeedObject(feedDatabaseHandler.getCount(), true, friend, new Date(), null, filter, 0f, false, "");
+                    feedDatabaseHandler.addToFeedDB(feedObject);
+                    Intent intent = new Intent();
+                    intent.setAction(SoundByteConstants.dbUpdateBroadcast);
+                    context.sendBroadcast(intent);
+                }
+            }
+        };
+        feedDatabaseHandler = getInstance(context, response);
     }
 
     public static synchronized FeedDatabaseHandler getInstance(Context context, DBHandlerResponse dbHandlerResponse){
