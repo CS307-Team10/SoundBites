@@ -211,7 +211,9 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      */
     public void playTrack(int trackId)
     {
+        pauseAllAudio();
         final FilterManager fm = new FilterManager(mFileName,getContext());
+        setAudioPlaybackFinishedCallback();
         switch(currentSelectedFilterId)
         {
             case 0:
@@ -239,6 +241,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      * TODO iterate through the audioTrackViews and call resetAudioButton()
      */
     public void pauseAllAudio(){
+        FilterManager.stopAudio();
         //right now there's just one trackID which is 1
         if(onlyTrack != null)
           pauseTrack(1);
@@ -253,7 +256,6 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      *                It's the id that's assigned to an audioTrackView on controller registration.
      */
     public void pauseTrack(int trackId){
-        FilterManager.stopAudio();
         if(onlyTrack != null)
             onlyTrack.resetPlayButton();
     }

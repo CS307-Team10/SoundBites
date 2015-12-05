@@ -151,6 +151,7 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
      */
     @Override
     public void pauseAllAudio(){
+        FilterManager.stopAudio();
         //Since only one audio can play at a time, it only has to pause one audio
         if(currentlyPlaying != -1)
             pauseTrack(currentlyPlaying);

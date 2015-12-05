@@ -181,11 +181,19 @@ public class FilterManager
 
     public static void stopAudio(){
         Log.v("fm", "stop audio");
-        sp.stop(playingId);
-        sp.autoResume();
-        handler.removeCallbacks(null);
+        if(sp != null) {
+            sp.stop(playingId);
+            sp.autoResume();
+        }
+        if(handler != null)
+            handler.removeCallbacks(null);
         if(r != null)
             r.stop();
+        if(callback != null && isPlaying) {
+            isPlaying = false;
+            callback.audioFinished();
+            callback = null;
+        }
         isPlaying = false;
     }
 
