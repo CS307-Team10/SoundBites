@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.soundbytes.views.AudioTrackView;
 
@@ -77,6 +78,8 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
                     intent.putExtra("filter", currentSelectedFilterId);
                     System.out.println("uName" + uName);
                     startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(), "Record something to send!", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

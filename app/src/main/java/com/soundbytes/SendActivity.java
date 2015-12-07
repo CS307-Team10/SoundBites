@@ -33,8 +33,8 @@ import java.util.ArrayList;
 public class SendActivity extends AppCompatActivity implements View.OnClickListener {
     public static final int CONNECTION_TIMEOUT = 1000 * 15;
     private static final String SERVER_ADDRESS = "http://naveenganessin.com/";
-    Button bUploadImage, bMainBack, bSendFriend;
-    EditText uploadImageName, FriendNameSend;
+    Button bMainBack, bSendFriend;
+    EditText FriendNameSend;
     File file = null;
     UserLocalStore userLocalStore;
     String selectedPath = Environment.getExternalStorageDirectory() + "/audiorecordtest.3gp";
@@ -45,12 +45,9 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
-        bUploadImage = (Button) findViewById(R.id.bUploadImage);
         bMainBack = (Button) findViewById(R.id.bMainBack);
         bSendFriend = (Button)findViewById(R.id.bSendFriend);
-        uploadImageName = (EditText) findViewById(R.id.etUploadName);
         FriendNameSend = (EditText) findViewById(R.id.etFriendNameSend);
-        bUploadImage.setOnClickListener(this);
         bMainBack.setOnClickListener(this);
         bSendFriend.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
@@ -63,7 +60,11 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.bUploadImage:
+            case R.id.bMainBack:
+                startActivity(new Intent(SendActivity.this, MainActivity.class));
+                break;
+            case R.id.bSendFriend:
+                //System.out.println(userLocalStore.getLoggedInUser().name);
                 file = new File(Environment.getExternalStorageDirectory() + "/audiorecordtest.3gp");
                 System.out.println(Environment.getExternalStorageDirectory() + "/audiorecordtest.3gp");
                 if (file == null) {
@@ -71,14 +72,9 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     System.out.println("file made");
                 }
-                finalName = uName + uploadImageName.getText().toString();
+                finalName = uName + FriendNameSend.getText().toString();
                 new UploadImage(file, finalName).execute();
-                break;
-            case R.id.bMainBack:
-                startActivity(new Intent(SendActivity.this, MainActivity.class));
-                break;
-            case R.id.bSendFriend:
-                //System.out.println(userLocalStore.getLoggedInUser().name);
+
                 System.out.println(FriendNameSend.getText().toString());
                 System.out.println("inside bPress: " + uName);
                 System.out.println("filter: "+ filter);
