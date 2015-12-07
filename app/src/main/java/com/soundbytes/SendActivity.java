@@ -39,7 +39,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
     UserLocalStore userLocalStore;
     String selectedPath = Environment.getExternalStorageDirectory() + "/audiorecordtest.3gp";
     User cUser;
-    String uName;
+    String uName, finalName;
     int filter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
         uName = bundle.getString("uName");
         filter = bundle.getInt("filter");
         System.out.println("name: " + uName);
+        finalName = "";
     }
 
     @Override
@@ -70,7 +71,8 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     System.out.println("file made");
                 }
-                new UploadImage(file, uploadImageName.getText().toString()).execute();
+                finalName = uName + uploadImageName.getText().toString();
+                new UploadImage(file, finalName).execute();
                 break;
             case R.id.bMainBack:
                 startActivity(new Intent(SendActivity.this, MainActivity.class));
