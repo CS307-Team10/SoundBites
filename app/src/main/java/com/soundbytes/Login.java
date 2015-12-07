@@ -37,8 +37,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 String password = etPassword.getText().toString();
                 User user = new User(username, password);
                 authenticate(user);
-                userLocalStore.storeUserData(user);
-                userLocalStore.setUserLoggedin(true);
+                //userLocalStore.storeUserData(user);
+                //userLocalStore.setUserLoggedin(true);
 
 
 

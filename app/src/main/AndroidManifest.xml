@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.soundbytes">
+    package="com.soundbytes" >
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <permission android:name="com.soundbytes.permission.C2D_MESSAGE"
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="com.soundbytes.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.soundbytes.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -21,32 +27,35 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="com.soundbytes" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".NewsFeedFragment$DatabaseUpdatedReceiver"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.soundbytes.DB_UPDATED" />
             </intent-filter>
         </receiver>
+
         <service
-            android:name="com.soundbytes.MyGcmListenerService"
+            android:name=".MyGcmListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
-            android:name="com.soundbytes.MyInstanceIDListenerService"
-            android:exported="false">
+            android:name=".MyInstanceIDListenerService"
+            android:exported="false" >
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
+
         <activity
-            android:name="com.soundbytes.LauncherActivity"
+            android:name=".LauncherActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,9 +64,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.soundbytes.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:parentActivityName="com.soundbytes.LauncherActivity" >
+            android:parentActivityName=".LauncherActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.soundbytes.LauncherActivity" />
@@ -70,8 +79,10 @@
             android:name=".Register"
             android:label="@string/title_activity_register" >
         </activity>
+        <activity
+            android:name=".SendActivity"
+            android:label="@string/title_activity_send" >
+        </activity>
     </application>
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 </manifest>

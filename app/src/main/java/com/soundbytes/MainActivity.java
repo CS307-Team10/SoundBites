@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ViewPager viewPager;
     private static MainActivity thisActivity;
-    UserLocalStore userLocalStore;
+    public UserLocalStore userLocalStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +79,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean authenticate(){
-        return userLocalStore.getUserLoggedIn();
-//        if (userLocalStore.getLoggedInUser() == null) {
-//            Intent intent = new Intent(this, Login.class);
-//            startActivity(intent);
-//            return false;
-//        }
-//        return true;
+        //return userLocalStore.getUserLoggedIn();
+        if (!userLocalStore.getUserLoggedIn() || userLocalStore.getLoggedInUser() == null) {
+            System.out.println("user not logged in");
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            return false;
+        }
+        return true;
     }
 
     protected static Activity getMainActivity(){

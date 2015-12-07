@@ -1,6 +1,9 @@
 package com.soundbytes;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.media.Image;
 import android.view.ContextMenu;
 
 import android.view.LayoutInflater;
@@ -18,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +37,7 @@ import java.io.File;
 /**
  * Created by Olumide on 10/3/2015.
  */
-public class ComposeFragment extends TitledFragment implements RecordButtonListeners, AudioTrackController{
+public class ComposeFragment extends TitledFragment implements RecordButtonListeners, View.OnClickListener, AudioTrackController{
     private String title;
 
     private AudioTrackView selectedTrack, onlyTrack;
@@ -40,14 +45,72 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
 
     private RecordButton r;
     private MediaRecorder mRecorder = null;
-
+    UserLocalStore userLocalStore;
     private PlayButton p = null;
     private MediaPlayer mPlayer = null;
 
     private static String mFileName = null;
 
     private int currentSelectedFilterId = 0;
+    private ImageButton bAddFriend;
+    private ImageButton bSend;
+    EditText etAddFriend;
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.person_add_button:
+                System.out.println("add friend clicked");
+                String friendName = etAddFriend.getText().toString();
+                User cUser = userLocalStore.getLoggedInUser();
+                String currentUser = cUser.username;
+                User user = new User(friendName, currentUser, -2);
+                authenticate(user);
+                break;
+            case R.id.send_button:
+                System.out.println("send button clicked");
+                User cuUser = userLocalStore.getLoggedInUser();
+                String uName = cuUser.username;
+                if(onlyTrack != null) {
+                    Intent intent = new Intent(getContext(), SendActivity.class);
+                    intent.putExtra("uName", uName);
+                    intent.putExtra("filter", currentSelectedFilterId);
+                    System.out.println("uName" + uName);
+                    startActivity(intent);
+                }
+                break;
+        }
+
+    }
+
+    private void authenticate(User user){
+        ServerRequests serverRequests = new ServerRequests(getContext());
+        serverRequests.addFriendDataInBackground(user, new GetUserCallBack() {
+            @Override
+            public void done(User returnedUser) {
+                if (returnedUser == null) {
+                    showErrorMessage();
+                } else {
+                    System.out.println("name:" + returnedUser.name);
+                    System.out.println("name:" + returnedUser.age);
+                    System.out.println("added friend successfully!");
+                    showSuccessMessage();
+                }
+            }
+        });
+    }
+    private void showErrorMessage(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage("nonexistent friend");
+        dialogBuilder.setPositiveButton("ok", null);
+        dialogBuilder.show();
+    }
+    private void showSuccessMessage(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage("Friend added successfully");
+        dialogBuilder.setPositiveButton("ok", null);
+        dialogBuilder.show();
+    }
     @Override
     /**
      * This returns the title of the fragment
@@ -59,6 +122,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
                     .getResources().getString(R.string.record_fragment_title);
         return title;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,7 +149,12 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
                 pauseAllAudio();
             }
         });
-
+        userLocalStore = ((MainActivity)getActivity()).userLocalStore;
+        bAddFriend = (ImageButton)view.findViewById(R.id.person_add_button);
+        bAddFriend.setOnClickListener(this);
+        etAddFriend = (EditText)view.findViewById(R.id.add_person_text);
+        bSend = (ImageButton)view.findViewById(R.id.send_button);
+        bSend.setOnClickListener(this);
         deleteRecordFile();
         return view;
     }
