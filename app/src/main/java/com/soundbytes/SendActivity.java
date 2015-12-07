@@ -40,6 +40,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
     String selectedPath = Environment.getExternalStorageDirectory() + "/audiorecordtest.3gp";
     User cUser;
     String uName;
+    int filter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +55,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
         bSendFriend.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
         uName = bundle.getString("uName");
+        filter = bundle.getInt("filter");
         System.out.println("name: " + uName);
     }
 
@@ -77,7 +79,18 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                 //System.out.println(userLocalStore.getLoggedInUser().name);
                 System.out.println(FriendNameSend.getText().toString());
                 System.out.println("inside bPress: " + uName);
-                new uploadFriendDetails(uName , FriendNameSend.getText().toString(), 0, 0, 0, 0).execute();
+                System.out.println("filter: "+ filter);
+                if(filter == 0) {
+                    new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 0, 0, 0, 0).execute();
+                } else if(filter == 1){
+                    new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 1, 0, 0, 0).execute();
+                } else if(filter == 2){
+                    new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 0, 1, 0, 0).execute();
+                } else if(filter == 3){
+                    new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 0, 0, 1, 0).execute();
+                } else if(filter == 4){
+                    new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 0, 0, 0, 1).execute();
+                }
                 break;
         }
     }
