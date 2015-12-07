@@ -77,7 +77,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
 
                 System.out.println(FriendNameSend.getText().toString());
                 System.out.println("inside bPress: " + uName);
-                System.out.println("filter: "+ filter);
+                System.out.println("filter: " + filter);
                 if(filter == 0) {
                     new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 0, 0, 0, 0).execute();
                 } else if(filter == 1){
@@ -89,6 +89,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                 } else if(filter == 4){
                     new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 0, 0, 0, 1).execute();
                 }
+                startActivity(new Intent(SendActivity.this, MainActivity.class));
                 break;
         }
     }
