@@ -15,6 +15,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
     EditText etUsername, etPassword;
     TextView tvRegisterLink;
     UserLocalStore userLocalStore;
+    private enum Field{UserName, Password};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +36,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
             case R.id.bLogin:
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
+                if(username.trim().equals("")){
+                    compulsoryField(Field.UserName);
+                    break;
+                }
+                if(password.trim().equals("")){
+                    compulsoryField(Field.Password);
+                    break;
+                }
                 User user = new User(username, password);
                 authenticate(user);
                 //userLocalStore.storeUserData(user);
@@ -47,6 +56,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 startActivity(new Intent(this, Register.class));
                 break;
         }
+    }
+
+    private void compulsoryField(Field field){
+
+    }
+
+    private void validateFields(){
+
     }
 
     private void authenticate(User user){

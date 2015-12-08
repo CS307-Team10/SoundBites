@@ -11,6 +11,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
+        android:id="@+id/no_keyboard"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_height="match_parent">
         <com.viewpagerindicator.TabPageIndicator
             android:id="@+id/view_pager_indicator"

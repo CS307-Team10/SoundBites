@@ -1,18 +1,15 @@
 package com.soundbytes;
 
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
@@ -61,7 +58,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bMainBack:
-                startActivity(new Intent(SendActivity.this, MainActivity.class));
+                finish();
                 break;
             case R.id.bSendFriend:
                 //System.out.println(userLocalStore.getLoggedInUser().name);
@@ -73,6 +70,19 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                     System.out.println("file made");
                 }
                 finalName = uName + FriendNameSend.getText().toString();
+                if(FriendNameSend.getText().toString().trim().equals("")){
+                    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                    alertDialog.setTitle("Ooops!");
+                    alertDialog.setMessage("The friend field is mandatory");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                    break;
+                }
                 new UploadImage(file, finalName).execute();
 
                 System.out.println(FriendNameSend.getText().toString());
@@ -89,7 +99,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                 } else if(filter == 4){
                     new uploadFriendDetails(uName, FriendNameSend.getText().toString(), 0, 0, 0, 1).execute();
                 }
-                startActivity(new Intent(SendActivity.this, MainActivity.class));
+                finish();
                 break;
         }
     }
@@ -141,7 +151,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             System.out.println("Friend Details Uploaded");
-            Toast.makeText(getApplicationContext(), "Friend Details Uploaded", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "Friend Details Uploaded", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -202,7 +212,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             System.out.println("Audio Uploaded");
-            Toast.makeText(getApplicationContext(), "Audio Uploaded", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "Audio Uploaded", Toast.LENGTH_SHORT).show();
         }
     }
     private HttpParams getHttpRequestParams() {

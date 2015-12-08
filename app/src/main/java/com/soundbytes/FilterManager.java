@@ -146,7 +146,6 @@ public class FilterManager
 
     private void setupSingle(SoundPool sp, int soundId){
         sp.autoPause();
-        isPlaying = true;
         if(callback != null){
             long duration = (long)(getSoundDuration(audioName, callback.getContext())/callback.getPlaybackSpeed());
             Log.v("duration", ""+duration);
@@ -164,15 +163,23 @@ public class FilterManager
                     stopped = true;
                 }
             };
-            handler.postDelayed(r, duration);
+            if(duration != -1) {
+                handler.postDelayed(r, duration);
+                isPlaying = true;
+            }else {
+                callback.audioFinished();
+            }
         }
     }
 
     public static long getSoundDuration(String audioName, Context context){
         MediaPlayer player = MediaPlayer.create(context, Uri.parse((new File(audioName)).toURI().toString()));
-        int duration = player.getDuration();
-        player.release();
-        return duration;
+        if(player != null) {
+            int duration = player.getDuration();
+            player.release();
+            return duration;
+        }
+        return -1;
     }
 
     public static void setAudioDoneCallback(OnAudioDoneCallback callback){

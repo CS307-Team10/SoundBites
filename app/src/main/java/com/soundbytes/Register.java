@@ -10,6 +10,7 @@ import android.widget.EditText;
 public class Register extends AppCompatActivity implements View.OnClickListener{
     Button bRegister;
     EditText etName, etAge, etUsername, etPassword;
+    private enum Field {Name, UserName, Age, Password};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +24,35 @@ public class Register extends AppCompatActivity implements View.OnClickListener{
         bRegister.setOnClickListener(this);
     }
 
+    private void compulsoryField(Field field){
+        
+    }
+
     @Override
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.bRegister:
-                String name = etName.getText().toString();
-                String username = etUsername.getText().toString();
-                String password = etPassword.getText().toString();
-                int age = Integer.parseInt(etAge.getText().toString());
+                String name = etName.getText().toString().trim();
+                if(name.equals("")) {
+                    compulsoryField(Field.Name);
+                    break;
+                }
+                String username = etUsername.getText().toString().trim();
+                if(username.equals("")) {
+                    compulsoryField(Field.UserName);
+                    break;
+                }
+                String password = etPassword.getText().toString().trim();
+                if(password.equals("")) {
+                    compulsoryField(Field.Password);
+                    break;
+                }
+                String ageString = etAge.getText().toString().trim();
+                if(ageString.equals("")) {
+                    compulsoryField(Field.Age);
+                    break;
+                }
+                int age = Integer.parseInt(ageString);
 
                 User user = new User(name, age, username, password);
                 registerUser(user);
@@ -43,7 +65,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener{
         serverRequests.storeUserDataInBackground(user, new GetUserCallBack() {
             @Override
             public void done(User returnedUser) {
-                startActivity(new Intent(Register.this, Login.class));
+                finish();
             }
         });
     }

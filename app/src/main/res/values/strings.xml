@@ -22,4 +22,5 @@
     <string name="gcm_sender_id">524610911908</string>
     <string name="time_text">%ds</string>
     <string name="title_activity_send">SendActivity</string>
+    <string name="compulsory">%s is a compulsory field</string>
 </resources>

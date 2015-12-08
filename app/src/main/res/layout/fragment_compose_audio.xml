@@ -24,7 +24,6 @@
             android:layout_marginBottom="60dp"
             android:id="@+id/controls_panel"
             android:layout_centerVertical="true"
-            android:focusableInTouchMode="true"
             android:onClick="clearFocus"
             android:layout_height="wrap_content"
             android:padding="30dp">

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.viewpagerindicator.TabPageIndicator;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private static MainActivity thisActivity;
     public UserLocalStore userLocalStore;
+    LinearLayout noKeyboard;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
         drawerLayout.setDrawerListener(mDrawerToggle);
         thisActivity = this;
+        noKeyboard = (LinearLayout)findViewById(R.id.no_keyboard);
         //populate navbar drawer
         populateNavDrawer();
 
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                Log.v("Position", ""+position);
+                clearFocus();
             }
 
             @Override
@@ -67,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
         TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.view_pager_indicator);
         indicator.setViewPager(viewPager);
         userLocalStore = new UserLocalStore(this);
+    }
+
+    public void clearFocus(){
+        clearFocus(noKeyboard);
     }
 
     @Override

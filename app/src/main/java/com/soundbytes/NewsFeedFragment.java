@@ -4,21 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 
 import com.andexert.expandablelayout.library.ExpandableLayoutItem;
 import com.andexert.expandablelayout.library.ExpandableLayoutListView;
@@ -61,6 +56,7 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         getContext().registerReceiver(receiver, filter);
+        setRetainInstance(true);
         return viewLayout;
     }
 
@@ -215,7 +211,6 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final SoundByteFeedObject feedObject = dbHandler.getFeedObject(dbHandler.getCount() -1 - position);
                 ExpandableLayoutItem mEplItem = (ExpandableLayoutItem) view.findViewById(R.id.expandableLayout);
-                Log.v("Class", "Class: " + view.getClass().toString());
                 if(feedObject.getIsSent()) {
                     mEplItem.hideNow();
                     currentlyOpen = -1;
@@ -227,7 +222,6 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
                     @Override
                     public void run() {
                         try{
-                            Log.v("audio path", "File name is:" + feedObject.getAudioPath());
                             track.autoUpdateRecordPreview(new File(feedObject.getAudioPath()), feedObject.getPlaybackSpeed());
                             currentlyOpen = feedObject.getId();
                             return;
@@ -309,5 +303,11 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
         if(feedView == null)
             return null;
         return feedView.getTrackView();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        getContext().unregisterReceiver(receiver);
     }
 }

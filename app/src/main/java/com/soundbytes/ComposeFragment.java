@@ -3,29 +3,22 @@ package com.soundbytes;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.view.ContextMenu;
 
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Environment;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.soundbytes.views.AudioTrackView;
@@ -51,10 +44,11 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     private MediaPlayer mPlayer = null;
 
     private static String mFileName = null;
-
+    private LinearLayout layout;
     private int currentSelectedFilterId = 0;
     private ImageButton bAddFriend;
     private ImageButton bSend;
+    private boolean isPlaying;
     EditText etAddFriend;
 
     @Override
@@ -146,6 +140,9 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         p.SetOutFileName(mFileName);
         p.SetMediaPlayer(mPlayer);
 
+        //Find the layout
+        layout = (LinearLayout) view.findViewById(R.id.track_layout);
+
         view.findViewById(R.id.pause_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +155,15 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         etAddFriend = (EditText)view.findViewById(R.id.add_person_text);
         bSend = (ImageButton)view.findViewById(R.id.send_button);
         bSend.setOnClickListener(this);
-        deleteRecordFile();
+        if(savedInstanceState != null && savedInstanceState.getInt(SoundByteConstants.TRACK_COUNT) > 0){
+            onStartRecording();
+            if(savedInstanceState.getBoolean(SoundByteConstants.IS_PLAYING))
+                onlyTrack.setPauseButton();
+            onlyTrack.setFilter(savedInstanceState.getInt(SoundByteConstants.FILTER));
+            onStopRecording();
+        }else{
+            deleteRecordFile();
+        }
         return view;
     }
 
@@ -225,8 +230,6 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
     }
 
     private void addTrackToLayout(AudioTrackView trackView){
-        //Find the layout
-        LinearLayout layout = (LinearLayout) getView().findViewById(R.id.track_layout);
         //Add the trackView to layout
         layout.addView(trackView);
         //Setup the long press stuff
@@ -286,6 +289,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
         pauseAllAudio();
         final FilterManager fm = new FilterManager(mFileName,getContext());
         setAudioPlaybackFinishedCallback();
+        isPlaying = true;
         switch(currentSelectedFilterId)
         {
             case 0:
@@ -313,6 +317,7 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      * TODO iterate through the audioTrackViews and call resetAudioButton()
      */
     public void pauseAllAudio(){
+        isPlaying = false;
         FilterManager.stopAudio();
         //right now there's just one trackID which is 1
         if(onlyTrack != null)
@@ -328,6 +333,8 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
      *                It's the id that's assigned to an audioTrackView on controller registration.
      */
     public void pauseTrack(int trackId){
+        isPlaying = false;
+        FilterManager.stopAudio();
         if(onlyTrack != null)
             onlyTrack.resetPlayButton();
     }
@@ -371,5 +378,13 @@ public class ComposeFragment extends TitledFragment implements RecordButtonListe
 //        else if(filterIndex == 4)
 //            currentSelectedFilterId = 2;
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SoundByteConstants.FILTER, currentSelectedFilterId);
+        outState.putInt(SoundByteConstants.TRACK_COUNT, trackCount);
+        outState.putBoolean(SoundByteConstants.IS_PLAYING, isPlaying);
     }
 }

@@ -4,9 +4,6 @@ package com.soundbytes.views;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -235,7 +232,14 @@ public class AudioTrackView extends RelativeLayout {
     }
 
 
-    public void resetFilterDists(){
+    public void setFilter(int filter){
+        resetFilterDists();
+        currentFilter = filter;
+        meter.invalidate(null, filter, filterDists);
+        controller.applyFilter(trackId, filter);
+    }
+
+    private void resetFilterDists(){
         filterDists[0] = 0;
         filterDists[1] = 0;
     }
