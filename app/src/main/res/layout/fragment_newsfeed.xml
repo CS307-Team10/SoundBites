@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:id="@+id/swipe_refresh"
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.andexert.expandablelayout.library.ExpandableLayoutListView
-        android:id="@+id/feed_exp_list_view"
+    <RelativeLayout
+        android:background="@color/default_circle_indicator_stroke_color"
+        android:layout_height="50dp"
         android:layout_width="match_parent"
-        android:focusableInTouchMode="true"
+        android:id="@+id/empty_newsfeed"
+        android:clickable="true">
+        <TextView
+            android:gravity="center"
+            android:textSize="17sp"
+            android:layout_width="match_parent"
+            android:text="@string/no_messages"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/swipe_refresh"
         android:layout_height="match_parent">
-    </com.andexert.expandablelayout.library.ExpandableLayoutListView>
-</android.support.v4.widget.SwipeRefreshLayout>
+        <com.andexert.expandablelayout.library.ExpandableLayoutListView
+            android:id="@+id/feed_exp_list_view"
+            android:layout_width="match_parent"
+            android:focusableInTouchMode="true"
+            android:layout_height="match_parent">
+        </com.andexert.expandablelayout.library.ExpandableLayoutListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</RelativeLayout>

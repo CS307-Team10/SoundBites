@@ -32,16 +32,27 @@ public class MyGcmListenerService extends GcmListenerService implements DBHandle
     public void onMessageReceived(String from, Bundle data) {
         String audio_id = data.getString("audioID");
         int id = dbHandler.getCount();
-        boolean sent = Boolean.parseBoolean(data.getString("sent"));
+        boolean sent = false;
+        try{
+            sent = Boolean.parseBoolean(data.getString("sent"));
+        }catch (Exception e){
+            sent = false;
+        }
+
         String friend = data.getString("friend");
         Date date;
         try {
             date = new Date(Long.parseLong(data.getString("date")));
-        }catch (NullPointerException e){
+        }catch (Exception e){
             date = new Date();
         }
         int filter =  Integer.parseInt(data.getString("filter"));
-        float speed = Float.parseFloat(data.getString("speed"));
+        float speed;
+        try{
+            speed = Float.parseFloat(data.getString("speed"));
+        } catch (NullPointerException e){
+            speed = SoundByteConstants.SPEEDS[filter];
+        }
 
         SoundByteFeedObject feedObject = new SoundByteFeedObject(id, sent, friend, date, null, filter, speed, false, audio_id);
         if(!feedObject.getIsSent())

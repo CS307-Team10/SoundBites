@@ -69,11 +69,11 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     System.out.println("file made");
                 }
-                finalName = uName + FriendNameSend.getText().toString();
+                finalName = uName + "-" + FriendNameSend.getText().toString();
                 if(FriendNameSend.getText().toString().trim().equals("")){
                     AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                     alertDialog.setTitle("Ooops!");
-                    alertDialog.setMessage("The friend field is mandatory");
+                    alertDialog.setMessage(getResources().getString(R.string.compulsory, "friend"));
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
@@ -212,7 +212,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             System.out.println("Audio Uploaded");
-//            Toast.makeText(getApplicationContext(), "Audio Uploaded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "SoundByte sent :)", Toast.LENGTH_SHORT).show();
         }
     }
     private HttpParams getHttpRequestParams() {

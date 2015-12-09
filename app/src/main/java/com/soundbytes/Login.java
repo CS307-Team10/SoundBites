@@ -1,6 +1,7 @@
 package com.soundbytes;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
     EditText etUsername, etPassword;
     TextView tvRegisterLink;
     UserLocalStore userLocalStore;
-    private enum Field{UserName, Password};
+    private enum Field{Username, Password};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +38,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
                 if(username.trim().equals("")){
-                    compulsoryField(Field.UserName);
+                    compulsoryField(Field.Username);
                     break;
                 }
                 if(password.trim().equals("")){
@@ -59,6 +60,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
     }
 
     private void compulsoryField(Field field){
+        android.support.v7.app.AlertDialog alertDialog = new android.support.v7.app.AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Ooops!");
+        alertDialog.setMessage(getResources().getString(R.string.compulsory, field));
+        alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        validateFields();
+        alertDialog.show();
 
     }
 

@@ -22,4 +22,5 @@ public class SoundByteConstants {
     //the empty string is a placeholder for none
 
     public static final String[] FILTER_NAME = {"", "HIGH PITCH", "LOW PITCH", "SPEED UP", "SLOW DOWN"};
+    public static final float[] SPEEDS = {1f, 1.2f, 0.8f, 2f, 0.6f};
 }

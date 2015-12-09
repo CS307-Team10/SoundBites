@@ -95,7 +95,7 @@ public class DrawerAdapter extends BaseAdapter {
         else if(position != (getCount() - 1)){
             InfoLinearLayout infoLayout;
             //Check if view can't be reused
-            if ((convertView instanceof ImageView) || (convertView == null)){
+            if (!(convertView instanceof InfoLinearLayout)){
                 infoLayout = new InfoLinearLayout(mContext, infoName[position], infoContent[position]);
             } else {
                 //Reuse view
@@ -106,7 +106,7 @@ public class DrawerAdapter extends BaseAdapter {
         }else{
             Button logout;
             //Check if view can't be reused
-            if ((convertView instanceof Button) || (convertView == null)){
+            if (!(convertView instanceof Button)){
                 logout = new Button(mContext);
             } else {
                 //Reuse view

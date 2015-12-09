@@ -149,7 +149,6 @@ public class ServerRequests {
         String key;
         GetUserCallBack userCallBack;
 
-        String SERVER_ADDRESS = "http://olu.mide.co/Random/CS307/";
         public StoreUserGCMKey(User user, String key, GetUserCallBack userCallBack){
             this.user = user;
             this.key = key;
@@ -188,7 +187,6 @@ public class ServerRequests {
         User user;
         String audio_ID;
         String b64;
-        String SERVER_ADDRESS = "http://olu.mide.co/Random/CS307/";
 
         public FetchAudioFile(User user, String audio_ID, OnAudioDownloadCallback audioCallBack) {
             this.user = user;

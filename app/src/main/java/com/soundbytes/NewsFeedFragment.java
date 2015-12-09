@@ -51,6 +51,7 @@ public class NewsFeedFragment extends TitledFragment implements DBHandlerRespons
         refresher.setOnRefreshListener(this);
         dbHandler = FeedDatabaseHandler.getInstance(getContext(), this);
         expListView.setOnItemClickListener(getItemClickListener());
+        expListView.setEmptyView(viewLayout.findViewById(R.id.empty_newsfeed));
         receiver = new DatabaseUpdatedReceiver();
         DatabaseUpdatedReceiver.frag = this;
         IntentFilter filter = new IntentFilter();
