@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.viewpagerindicator.TabPageIndicator;
 
@@ -116,10 +117,18 @@ public class MainActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userLocalStore.clearUserData();
-                userLocalStore.setUserLoggedin(false);
-                startActivity(new Intent(MainActivity.this, Login.class));
-                finish();
+                //delete token
+                new GCMRegistration(MainActivity.this, userLocalStore.getLoggedInUser(), new GCMRegistration.OnKeyStoredCallback() {
+                    @Override
+                    public void onKeyStored(boolean stored) {
+                        FilterManager.stopAudio();
+                        userLocalStore.clearUserData();
+                        userLocalStore.setUserLoggedin(false);
+                        Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.logged_out), Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(MainActivity.this, Login.class));
+                        finish();
+                    }
+                }).logout();
             }
         };
     }
@@ -173,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the actio//n bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }

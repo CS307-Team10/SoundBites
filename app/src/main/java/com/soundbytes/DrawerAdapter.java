@@ -2,6 +2,7 @@ package com.soundbytes;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.soundbytes.views.InfoLinearLayout;
+
+import java.util.Arrays;
 
 /**
  * Created by Olumide on 10/21/2015.
@@ -38,8 +41,8 @@ public class DrawerAdapter extends BaseAdapter {
     private void init(){
         UserLocalStore store = new UserLocalStore(mContext);
         user = store.getLoggedInUser();
-        infoName = new String[]{"", "Name", "Username", "Age", "Logout"};
-        infoContent = new String[]{"", user.name, "@"+user.username, user.age+"", "Logout"};
+        infoName = mContext.getResources().getStringArray(R.array.nav_drawer);
+        infoContent = new String[]{"", user.name, "@"+user.username, user.age+"", mContext.getResources().getString(R.string.logout)};
     }
 
     @Override

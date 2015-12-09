@@ -74,6 +74,23 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         feedDatabaseHandler = getInstance(context, response);
     }
 
+    public static void logout(final Context context){
+        DBHandlerResponse response = new DBHandlerResponse() {
+            @Override
+            public void onDBReady() {
+                if(feedDatabaseHandler != null) {
+                    feedDatabaseHandler.dropUserTable();
+                }
+            }
+        };
+        feedDatabaseHandler = getInstance(context, response);
+    }
+
+    private void dropUserTable(){
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
+    }
+
     public static synchronized FeedDatabaseHandler getInstance(Context context, DBHandlerResponse dbHandlerResponse){
         if(feedDatabaseHandler == null) {
             feedDatabaseHandler = new FeedDatabaseHandler(context.getApplicationContext(), dbHandlerResponse);
@@ -112,8 +129,7 @@ public class FeedDatabaseHandler extends SQLiteOpenHelper implements DBAsyncResp
         while(++incVer <= newVer){
             switch(incVer){
                 case 2:
-                    db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-                    onCreate(db);
+                    dropUserTable();
             }
         }
     }

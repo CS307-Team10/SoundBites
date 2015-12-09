@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.soundbytes.db.FeedDatabaseHandler;
+
 import java.io.IOException;
 
 /**
@@ -43,13 +45,30 @@ public class GCMRegistration implements GCMKeyCallback {
         new GetGCMKeyAsyncTask(this, context).execute();
     }
 
+    public void logout(){
+        progressDialog.show();
+        FeedDatabaseHandler.logout(context);
+        new DeleteGCMKeyAsyncTask(this, context).execute();
+    }
+
+    public void onKeyDeleted(){
+        prefs.edit().putBoolean(SoundByteConstants.IS_GCM_KEY_STORED, false).apply();
+        ServerRequests serverRequests = new ServerRequests(context);
+        serverRequests.storeUserKeyInBackground(user, "", new GetUserCallBack() {
+            @Override
+            public void done(User returnedUser) {
+                callback.onKeyStored(true);
+                progressDialog.dismiss();
+            }
+        });
+    }
+
     public void onKeyReturned(String key){
         if (key == null) {
             prefs.edit().putBoolean(SoundByteConstants.IS_GCM_KEY_STORED, false).apply();
             progressDialog.dismiss();
             callback.onKeyStored(false);
         }else {
-            //TODO Perform Server request
             prefs.edit().putBoolean(SoundByteConstants.IS_GCM_KEY_STORED, true).apply();
             ServerRequests serverRequests = new ServerRequests(context);
             serverRequests.storeUserKeyInBackground(user, key, new GetUserCallBack() {
@@ -91,6 +110,33 @@ public class GCMRegistration implements GCMKeyCallback {
         protected void onPostExecute(Void v) {
             super.onPostExecute(v);
             callback.onKeyReturned(token);
+        }
+    }
+
+    public class DeleteGCMKeyAsyncTask extends AsyncTask<Void, Void, Void> {
+        private GCMKeyCallback callback;
+        private Context context;
+
+        public DeleteGCMKeyAsyncTask(GCMKeyCallback callback, Context context){
+            this.callback = callback;
+            this.context = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                InstanceID.getInstance(context).deleteToken(context.getString(R.string.gcm_sender_id),
+                        GoogleCloudMessaging.INSTANCE_ID_SCOPE);
+            }catch (IOException ex){
+                Log.e("GCM", "Oops some error occurred");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            super.onPostExecute(v);
+            callback.onKeyDeleted();
         }
     }
 }

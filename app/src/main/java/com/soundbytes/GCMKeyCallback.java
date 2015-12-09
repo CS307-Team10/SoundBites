@@ -5,4 +5,5 @@ package com.soundbytes;
  */
 public interface GCMKeyCallback {
     void onKeyReturned(String key);
+    void onKeyDeleted();
 }

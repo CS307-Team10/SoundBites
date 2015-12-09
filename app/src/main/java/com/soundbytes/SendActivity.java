@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.soundbytes.db.FeedDatabaseHandler;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -212,6 +214,7 @@ public class SendActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             System.out.println("Audio Uploaded");
+            FeedDatabaseHandler.soundByteSent(SendActivity.this, FriendNameSend.getText().toString(), filter);
             Toast.makeText(getApplicationContext(), "SoundByte sent :)", Toast.LENGTH_SHORT).show();
         }
     }
