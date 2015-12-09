@@ -57,7 +57,8 @@ public class MyGcmListenerService extends GcmListenerService implements DBHandle
         SoundByteFeedObject feedObject = new SoundByteFeedObject(id, sent, friend, date, null, filter, speed, false, audio_id);
         if(!feedObject.getIsSent())
             sendNotification(feedObject);
-        if(dbHandlerReady && dbHandler != null) {
+        Log.e("dbready", Boolean.toString(dbHandlerReady));
+        if(dbHandlerReady && (dbHandler != null)) {
             dbHandler.addToFeedDB(feedObject);
             broadcastIntent();
         }else{
