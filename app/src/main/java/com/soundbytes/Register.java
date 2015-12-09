@@ -22,6 +22,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener{
         etPassword = (EditText)findViewById(R.id.etPassword);
         bRegister = (Button)findViewById(R.id.bRegister);
         bRegister.setOnClickListener(this);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void compulsoryField(Field field){
