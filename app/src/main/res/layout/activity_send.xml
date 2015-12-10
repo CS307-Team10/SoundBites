@@ -1,7 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="10dp"
+    android:padding="16dp"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -9,14 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/bMainBack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Back"/>
-
-
         <EditText
+            android:paddingTop="40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/etFriendNameSend"
@@ -28,6 +22,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Send"/>
+
+        <Button
+            android:id="@+id/bMainBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Back"/>
 
     </LinearLayout>
 
