@@ -210,7 +210,7 @@ public class FilterManager
         Context getContext();
     }
 
-    private interface MyRunnable extends Runnable{
+    public interface MyRunnable extends Runnable{
         void run();
         void stop();
     }

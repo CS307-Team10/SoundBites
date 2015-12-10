@@ -25,6 +25,7 @@
     <string name="no_messages">No messages :(</string>
     <string name="logged_out">Successfully logged out</string>
     <string name="logout">Logout</string>
+    <string name="splashscreen">Splash Screen</string>
     <array name="nav_drawer">
         <item></item>
         <item>Name</item>

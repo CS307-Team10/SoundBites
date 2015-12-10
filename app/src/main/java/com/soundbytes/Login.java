@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.support.v7.app.ActionBar;
 
 public class Login extends AppCompatActivity implements View.OnClickListener{
 
@@ -29,6 +30,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         bLogin.setOnClickListener(this);
         tvRegisterLink.setOnClickListener(this);
         userLocalStore = new UserLocalStore(this);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
     }
 
     @Override

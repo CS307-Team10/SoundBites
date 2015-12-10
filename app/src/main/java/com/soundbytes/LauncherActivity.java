@@ -9,17 +9,33 @@ import android.view.MenuItem;
 import android.view.View;
 
 public class LauncherActivity extends AppCompatActivity {
+    protected FilterManager.MyRunnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
-        new Handler().postDelayed(new Runnable() {
+        runnable = new FilterManager.MyRunnable() {
+            boolean stopped = false;
+            @Override
+            public void stop() {
+                stopped = true;
+            }
+
             @Override
             public void run() {
+                if (!stopped)
+                    launchMainActivity();
+            }
+        };
+        new Handler().postDelayed(runnable, 3000);
+        findViewById(R.id.splash_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runnable.stop();
                 launchMainActivity();
             }
-        }, 3000);
+        });
     }
 
     @Override

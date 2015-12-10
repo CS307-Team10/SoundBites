@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>
     </style>
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -23,4 +23,7 @@
         <item name="android:textColor">#FF555555</item>
     </style>
 
+    <style name="MainTheme" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/text_primary</item>
+    </style>
 </resources>
